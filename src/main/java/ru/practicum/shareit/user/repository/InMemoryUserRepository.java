@@ -1,8 +1,6 @@
 package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.user.UserValidator;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
@@ -12,7 +10,7 @@ import java.util.Map;
 @Component
 public class InMemoryUserRepository implements UserRepository {
 
-    private Map<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     private Long nextId = 1L;
 
@@ -51,10 +49,6 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User updateUser(final User user) {
-        if (findUserById(user.getId()) == null) {
-            throw new NotFoundException("User not found");
-        }
-        UserValidator.validate(user);
         users.put(user.getId(), user);
         return user;
     }

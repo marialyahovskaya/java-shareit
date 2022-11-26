@@ -15,5 +15,4 @@ public interface UserService {
    User patchUser(final Long id, final User user);
 
    void deleteUser(final Long id);
-
 }

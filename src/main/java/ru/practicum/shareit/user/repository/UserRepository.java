@@ -15,8 +15,8 @@ public interface UserRepository {
 
  User findUserByEmail(final String email);
 
- User updateUser(final User user);
-
  void deleteUser(final Long id);
+
+ User updateUser(final User user);
 
 }
