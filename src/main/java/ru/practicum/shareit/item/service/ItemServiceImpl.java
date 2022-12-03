@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -8,16 +9,18 @@ import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemValidator;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -27,29 +30,30 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto addItem(final Long userId, final ItemDto itemDto) {
         ItemValidator.validate(itemDto);
-        if (userRepository.findUserById(userId) == null) {
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("User not found");
         }
         Item itemToAdd = ItemMapper.toItem(userId, itemDto);
         if (itemToAdd.getAvailable() == null) {
             throw new ValidationException("Item is not available");
         }
-        Item createdItem = itemRepository.addItem(itemToAdd);
+        Item createdItem = itemRepository.save(itemToAdd);
         return ItemMapper.toItemDto(createdItem);
     }
 
     @Override
     public ItemDto findItemById(final Long id) {
-        Item item = itemRepository.findItemById(id);
-        if (item == null) {
+        Optional<Item> item = itemRepository.findById(id);
+        if (item.isEmpty()) {
             throw new NotFoundException("Item not found");
         }
-        return ItemMapper.toItemDto(item);
+        return ItemMapper.toItemDto(item.get());
     }
 
     @Override
     public Collection<ItemDto> findItemsByUserId(final Long userId) {
-        return itemRepository.findItemsByUserId(userId).stream()
+        log.info("trying to find items of user with id " + userId);
+        return itemRepository.findByUserId(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toUnmodifiableList());
     }
@@ -72,10 +76,11 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new ValidationException("UserId not provided");
         }
-        Item itemToUpdate = itemRepository.findItemById(id);
-        if (itemToUpdate == null) {
+        Optional<Item> loadedItem = itemRepository.findById(id);
+        if (loadedItem.isEmpty()) {
             throw new NotFoundException("Item not found");
         }
+        Item itemToUpdate = loadedItem.get();
         if (!userId.equals(itemToUpdate.getUserId())) {
             throw new NotFoundException("Item not found");
         }
@@ -90,7 +95,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         ItemValidator.validate(ItemMapper.toItemDto(itemToUpdate));
-        Item updatedItem = itemRepository.updateItem(itemToUpdate);
+        Item updatedItem = itemRepository.save(itemToUpdate);
         return ItemMapper.toItemDto(updatedItem);
     }
 }
