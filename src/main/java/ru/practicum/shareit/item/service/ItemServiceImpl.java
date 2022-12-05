@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemMapper;
@@ -12,6 +14,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -26,6 +29,8 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
 
     private final UserRepository userRepository;
+
+    private final BookingRepository bookingRepository;
 
     @Override
     public ItemDto addItem(final Long userId, final ItemDto itemDto) {
@@ -47,7 +52,9 @@ public class ItemServiceImpl implements ItemService {
         if (item.isEmpty()) {
             throw new NotFoundException("Item not found");
         }
-        return ItemMapper.toItemDto(item.get());
+        Optional<Booking> lastBooking = bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(id, LocalDateTime.now());
+        Optional<Booking> nextBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(id, LocalDateTime.now());
+        return ItemMapper.toItemDto(item.get(), lastBooking, nextBooking);
     }
 
     @Override
@@ -66,7 +73,7 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findAll().stream()
                 .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) ||
                         item.getDescription().toLowerCase().contains(text.toLowerCase()))
-                .filter(item -> item.getAvailable())
+                .filter(Item::getAvailable)
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toUnmodifiableList());
     }
