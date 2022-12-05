@@ -1,4 +1,4 @@
-DROP TABLE if EXISTS users, items, bookings;
+DROP TABLE if EXISTS users, items, bookings, comments;
 CREATE TABLE if NOT EXISTS public.users
 (
     id int8 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -24,5 +24,14 @@ CREATE TABLE if NOT EXISTS public.bookings
     status     varchar NOT NULL,
     CONSTRAINT start_before_end CHECK (start_date < end_date)
 );
+
+CREATE TABLE public."comments" (
+                                   id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
+                                   "text" varchar NOT NULL,
+                                   item_id int8 NOT NULL,
+                                   author_id int8 NOT NULL,
+                                   created timestamp without time zone
+);
+
 
 

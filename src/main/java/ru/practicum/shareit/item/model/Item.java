@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "items", schema = "public")
@@ -26,4 +28,9 @@ public class Item {
 
     @Column(name = "is_available", nullable = false)
     private Boolean available;
+
+    @OneToMany
+    @JoinColumn(name = "item_id")
+    private List<Comment> comments = new ArrayList<>();
+
 }

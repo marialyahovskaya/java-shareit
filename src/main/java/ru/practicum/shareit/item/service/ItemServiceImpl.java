@@ -5,18 +5,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.ItemValidator;
+import ru.practicum.shareit.item.*;
+import ru.practicum.shareit.item.dto.CommentCreationDto;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,6 +36,8 @@ public class ItemServiceImpl implements ItemService {
 
     private final BookingRepository bookingRepository;
 
+    private final CommentRepository commentRepository;
+
     @Override
     public ItemDto addItem(final Long userId, final ItemDto itemDto) {
         ItemValidator.validate(itemDto);
@@ -44,6 +50,34 @@ public class ItemServiceImpl implements ItemService {
         }
         Item createdItem = itemRepository.save(itemToAdd);
         return ItemMapper.toItemDto(createdItem);
+    }
+
+    @Override
+    public CommentDto addComment(final Long userId, final Long itemId, final CommentCreationDto commentCreationDto) {
+        CommentValidator.validate(commentCreationDto);
+        Optional<Item> item = itemRepository.findById(itemId);
+        if (item.isEmpty()) {
+            throw new NotFoundException("Item not found");
+        }
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new NotFoundException("User not found");
+        }
+        List<Booking> bookings = bookingRepository.findByItem_IdAndEndIsBefore(itemId, LocalDateTime.now());
+        boolean hasEverBooked = false;
+        for (Booking booking : bookings) {
+            if (booking.getBooker().getId().equals(userId) && booking.getStatus() == BookingState.APPROVED) {
+                hasEverBooked = true;
+                break;
+            }
+        }
+        if (!hasEverBooked) {
+            throw new ValidationException("Cannot creat comment");
+        }
+        Comment comment = CommentMapper.toComment(userId, itemId, commentCreationDto);
+        comment.setAuthor(user.get());
+        Comment savedComment = commentRepository.save(comment);
+        return CommentMapper.commentToDto(savedComment);
     }
 
     @Override
