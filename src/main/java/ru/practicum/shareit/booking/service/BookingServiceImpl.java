@@ -86,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
                     LocalDateTime.now(),
                     LocalDateTime.now());
         } else if (requestedState == BookingRequestState.PAST) {
-            return bookingRepository.findByBookerAndStatusAndEndIsBeforeOrderByStartDesc(user.get(), BookingState.APPROVED, LocalDateTime.now());
+            return bookingRepository.findByBookerAndEndIsBeforeOrderByStartDesc(user.get(), LocalDateTime.now());
         } else if (requestedState == BookingRequestState.FUTURE) {
             return bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(user.get(), LocalDateTime.now());
         } else if (requestedState == BookingRequestState.WAITING) {
@@ -116,7 +116,7 @@ public class BookingServiceImpl implements BookingService {
                     LocalDateTime.now(),
                     LocalDateTime.now());
         } else if (requestedState == BookingRequestState.PAST) {
-            return bookingRepository.findByItemUserIdAndStatusAndEndIsBeforeOrderByStartDesc(userId, BookingState.APPROVED, LocalDateTime.now());
+            return bookingRepository.findByItemUserIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now());
         } else if (requestedState == BookingRequestState.FUTURE) {
             return bookingRepository.findByItemUserIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now());
         } else if (requestedState == BookingRequestState.WAITING) {
