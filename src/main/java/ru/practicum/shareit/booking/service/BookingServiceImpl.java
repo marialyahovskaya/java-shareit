@@ -14,6 +14,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -68,8 +69,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Collection<Booking> findBookingsByBookerId(Long userId, String state) {
+        BookingRequestState requestedState;
         try {
-            BookingRequestState requestedState = BookingRequestState.valueOf(state);
+            requestedState = BookingRequestState.valueOf(state);
         } catch (IllegalArgumentException e) {
             throw new ValidationException("Unknown state: " + state);
         }
@@ -77,14 +79,30 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new NotFoundException("User not found");
         }
-
-        return bookingRepository.findByBookerOrderByStartDesc(user.get());
+        if (requestedState == BookingRequestState.ALL) {
+            return bookingRepository.findByBookerOrderByStartDesc(user.get());
+        } else if (requestedState == BookingRequestState.CURRENT) {
+            return bookingRepository.findByBookerAndStatusAndStartIsBeforeAndEndIsAfterOrderByStartDesc(user.get(),
+                    BookingState.APPROVED,
+                    LocalDateTime.now(),
+                    LocalDateTime.now());
+        } else if (requestedState == BookingRequestState.PAST) {
+            return bookingRepository.findByBookerAndStatusAndEndIsBeforeOrderByStartDesc(user.get(), BookingState.APPROVED, LocalDateTime.now());
+        } else if (requestedState == BookingRequestState.FUTURE) {
+            return bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(user.get(), LocalDateTime.now());
+        } else if (requestedState == BookingRequestState.WAITING) {
+            return bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.WAITING);
+        } else if (requestedState == BookingRequestState.REJECTED) {
+            return bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.REJECTED);
+        }
+        throw new ValidationException("Invalid booking state");
     }
 
     @Override
     public Collection<Booking> findBookingsByOwnerId(Long userId, String state) {
+        BookingRequestState requestedState;
         try {
-            BookingRequestState requestedState = BookingRequestState.valueOf(state);
+            requestedState = BookingRequestState.valueOf(state);
         } catch (IllegalArgumentException e) {
             throw new ValidationException("Unknown state: " + state);
         }
@@ -92,8 +110,24 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new NotFoundException("User not found");
         }
+        if (requestedState == BookingRequestState.ALL) {
+            return bookingRepository.findByItemUserIdOrderByStartDesc(userId);
+        } else if (requestedState == BookingRequestState.CURRENT) {
+            return bookingRepository.findByItemUserIdAndStatusAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId,
+                    BookingState.APPROVED,
+                    LocalDateTime.now(),
+                    LocalDateTime.now());
+        } else if (requestedState == BookingRequestState.PAST) {
+            return bookingRepository.findByItemUserIdAndStatusAndEndIsBeforeOrderByStartDesc(userId, BookingState.APPROVED, LocalDateTime.now());
+        } else if (requestedState == BookingRequestState.FUTURE) {
+            return bookingRepository.findByItemUserIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now());
+        } else if (requestedState == BookingRequestState.WAITING) {
+            return bookingRepository.findByItemUserIdAndStatusOrderByStartDesc(userId, BookingState.WAITING);
+        } else if (requestedState == BookingRequestState.REJECTED) {
+            return bookingRepository.findByItemUserIdAndStatusOrderByStartDesc(userId, BookingState.REJECTED);
+        }
+        throw new ValidationException("Invalid booking state");
 
-        return bookingRepository.findByItemUserIdOrderByStartDesc(userId);
     }
 
     @Override

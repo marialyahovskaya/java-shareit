@@ -81,21 +81,27 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto findItemById(final Long id) {
+    public ItemDto findItemById(final Long userId, final Long id) {
         Optional<Item> item = itemRepository.findById(id);
         if (item.isEmpty()) {
             throw new NotFoundException("Item not found");
         }
-        Optional<Booking> lastBooking = bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(id, LocalDateTime.now());
-        Optional<Booking> nextBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(id, LocalDateTime.now());
+        Optional<Booking> lastBooking = Optional.empty();
+        Optional<Booking> nextBooking = Optional.empty();
+        if (userId.equals(item.get().getUserId())) {
+            lastBooking = bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(id, LocalDateTime.now());
+            nextBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(id, LocalDateTime.now());
+        }
         return ItemMapper.toItemDto(item.get(), lastBooking, nextBooking);
     }
 
     @Override
     public Collection<ItemDto> findItemsByUserId(final Long userId) {
         log.info("trying to find items of user with id " + userId);
-        return itemRepository.findByUserId(userId).stream()
-                .map(ItemMapper::toItemDto)
+        return itemRepository.findByUserIdOrderByIdAsc(userId).stream()
+                .map(item -> ItemMapper.toItemDto(item,
+                        bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now()),
+                        bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(item.getId(), LocalDateTime.now())))
                 .collect(Collectors.toUnmodifiableList());
     }
 
