@@ -82,8 +82,7 @@ public class BookingServiceImpl implements BookingService {
         if (requestedState == BookingRequestState.ALL) {
             return bookingRepository.findByBookerOrderByStartDesc(user.get());
         } else if (requestedState == BookingRequestState.CURRENT) {
-            return bookingRepository.findByBookerAndStatusAndStartIsBeforeAndEndIsAfterOrderByStartDesc(user.get(),
-                    BookingState.APPROVED,
+            return bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(user.get(),
                     LocalDateTime.now(),
                     LocalDateTime.now());
         } else if (requestedState == BookingRequestState.PAST) {
@@ -113,8 +112,7 @@ public class BookingServiceImpl implements BookingService {
         if (requestedState == BookingRequestState.ALL) {
             return bookingRepository.findByItemUserIdOrderByStartDesc(userId);
         } else if (requestedState == BookingRequestState.CURRENT) {
-            return bookingRepository.findByItemUserIdAndStatusAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId,
-                    BookingState.APPROVED,
+            return bookingRepository.findByItemUserIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId,
                     LocalDateTime.now(),
                     LocalDateTime.now());
         } else if (requestedState == BookingRequestState.PAST) {

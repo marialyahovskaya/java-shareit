@@ -14,10 +14,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBookerAndStatusOrderByStartDesc(User booker, BookingState status);
 
-    List<Booking> findByBookerAndStatusAndStartIsBeforeAndEndIsAfterOrderByStartDesc(User booker,
-                                                                                     BookingState status,
-                                                                                     LocalDateTime start,
-                                                                                     LocalDateTime end);
+    List<Booking> findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(User booker,
+                                                                            LocalDateTime start,
+                                                                            LocalDateTime end);
 
     List<Booking> findByBookerAndStatusAndEndIsBeforeOrderByStartDesc(User booker, BookingState status, LocalDateTime end);
 
@@ -27,10 +26,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByItemUserIdAndStatusOrderByStartDesc(Long userId, BookingState status);
 
-    List<Booking> findByItemUserIdAndStatusAndStartIsBeforeAndEndIsAfterOrderByStartDesc(Long userId,
-                                                                                         BookingState status,
-                                                                                         LocalDateTime start,
-                                                                                         LocalDateTime end);
+    List<Booking> findByItemUserIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(Long userId,
+                                                                                LocalDateTime start,
+                                                                                LocalDateTime end);
 
     List<Booking> findByItemUserIdAndStatusAndEndIsBeforeOrderByStartDesc(Long userId, BookingState status, LocalDateTime end);
 
