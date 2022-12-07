@@ -9,7 +9,7 @@ CREATE TABLE if NOT EXISTS public.users
 CREATE TABLE if NOT EXISTS public.items
 (
     id int8 GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "name" varchar NOT NULL,
+    name varchar NOT NULL,
     description varchar NOT NULL,
     is_available boolean NOT NULL,
     owner_id bigint NOT NULL
@@ -25,7 +25,7 @@ CREATE TABLE if NOT EXISTS public.bookings
     CONSTRAINT start_before_end CHECK (start_date < end_date)
 );
 
-CREATE TABLE public."comments" (
+CREATE TABLE if NOT EXISTS public."comments" (
                                    id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
                                    "text" varchar NOT NULL,
                                    item_id int8 NOT NULL,
