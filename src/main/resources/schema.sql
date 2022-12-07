@@ -25,7 +25,7 @@ CREATE TABLE if NOT EXISTS public.bookings
     CONSTRAINT start_before_end CHECK (start_date < end_date)
 );
 
-CREATE TABLE if NOT EXISTS public."comments" (
+CREATE TABLE if NOT EXISTS public.comments (
                                    id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
                                    text varchar NOT NULL,
                                    item_id int8 NOT NULL,
