@@ -27,7 +27,7 @@ CREATE TABLE if NOT EXISTS public.bookings
 
 CREATE TABLE if NOT EXISTS public."comments" (
                                    id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
-                                   "text" varchar NOT NULL,
+                                   text varchar NOT NULL,
                                    item_id int8 NOT NULL,
                                    author_id int8 NOT NULL,
                                    created timestamp without time zone
