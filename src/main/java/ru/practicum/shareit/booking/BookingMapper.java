@@ -6,6 +6,9 @@ import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 public class BookingMapper {
 
     public static Booking toBooking(Long userId, BookingCreationDto bookingCreationDto) {
@@ -32,7 +35,14 @@ public class BookingMapper {
                 .end(booking.getEnd())
                 .item(booking.getItem())
                 .bookerId(booking.getBooker().getId())
+                .booker(booking.getBooker())
                 .status(booking.getStatus())
                 .build();
+    }
+
+    public static Collection<BookingDto> toBookingDto(Collection<Booking> bookings) {
+        return bookings.stream()
+                .map(BookingMapper::toBookingDto)
+                .collect(Collectors.toUnmodifiableList());
     }
 }
