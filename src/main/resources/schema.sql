@@ -12,7 +12,8 @@ CREATE TABLE if NOT EXISTS public.items
     name varchar NOT NULL,
     description varchar NOT NULL,
     is_available boolean NOT NULL,
-    owner_id bigint NOT NULL
+    owner_id bigint NOT NULL,
+    requestor_id int8
 );
 CREATE TABLE if NOT EXISTS public.bookings
 (

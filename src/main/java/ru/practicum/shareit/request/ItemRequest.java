@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * TODO Sprint add-item-requests.
  */
 @Entity
-@Table(name = "request", schema = "public")
+@Table(name = "requests", schema = "public")
 @Setter
 @Getter
 @ToString

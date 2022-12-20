@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
+import javax.persistence.Column;
 import java.util.Collection;
 
 @Data
@@ -14,6 +15,7 @@ public class ItemDto {
     private String name;
     private String description;
     private Boolean available;
+    private Long requestId;
     private BookingDto lastBooking;
     private BookingDto nextBooking;
     private Collection<CommentDto> comments;

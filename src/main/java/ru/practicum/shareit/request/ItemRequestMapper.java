@@ -13,7 +13,7 @@ public class ItemRequestMapper {
         ItemRequest itemRequest = new ItemRequest();
         itemRequest.setId(itemRequestDto.getId());
         itemRequest.setDescription(itemRequestDto.getDescription());
-        itemRequest.setRequestorId(itemRequestDto.getRequestorId());
+        itemRequest.setRequestorId(userId);
         itemRequest.setCreated(itemRequestDto.getCreated());
         return itemRequest;
     }

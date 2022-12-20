@@ -16,6 +16,7 @@ public class ItemMapper {
         item.setUserId(userId);
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
+        item.setRequestId(itemDto.getRequestId());
         item.setAvailable(itemDto.getAvailable());
         return item;
     }
@@ -26,6 +27,7 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(item.getRequestId())
                 .comments(item.getComments().stream()
                         .map(CommentMapper::commentToDto)
                         .collect(Collectors.toUnmodifiableList()))
