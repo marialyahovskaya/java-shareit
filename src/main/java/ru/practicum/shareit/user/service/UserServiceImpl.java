@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserValidator;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,52 +21,52 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User addUser(final User user) {
+    public UserDto addUser(final UserDto userDto) {
+
+        User user = UserMapper.toUser(userDto);
         UserValidator.validate(user);
-        if (userRepository.findUserByEmail(user.getEmail()) != null) {
-            throw new AlreadyExistsException("User already exists");
-        }
-        return userRepository.addUser(user);
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
-    public Collection<User> findAllUsers() {
-        return userRepository.findAllUsers();
+    public Collection<UserDto> findAllUsers() {
+        return UserMapper.toUserDto(userRepository.findAll());
     }
 
     @Override
-    public User findUserById(final Long id) {
-        User user = userRepository.findUserById(id);
-        if (user == null) {
+    public UserDto findUserById(final Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
             throw new NotFoundException("User not found");
         }
-        return user;
+        return UserMapper.toUserDto(user.get());
     }
 
     @Override
-    public User patchUser(final Long id, final User user) {
-        User userToUpdate = findUserById(id);
-        if (userToUpdate == null) {
+    public UserDto patchUser(final Long id, final UserDto userDto) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
             throw new NotFoundException("User not found");
         }
-        if (user.getName() != null) {
-            userToUpdate.setName(user.getName());
+        User userToUpdate = user.get();
+        if (userDto.getName() != null) {
+            userToUpdate.setName(userDto.getName());
         }
-        if (user.getEmail() != null) {
-            if (userRepository.findUserByEmail(user.getEmail()) != null) {
+        if (userDto.getEmail() != null) {
+            if (!userRepository.findByEmailContainingIgnoreCase(userDto.getEmail()).isEmpty()) {
                 throw new AlreadyExistsException("User with provided email already exists");
             }
-            userToUpdate.setEmail(user.getEmail());
+            userToUpdate.setEmail(userDto.getEmail());
         }
 
         UserValidator.validate(userToUpdate);
-        userRepository.updateUser(userToUpdate);
-        return userToUpdate;
+        userRepository.save(userToUpdate);
+        return UserMapper.toUserDto(userToUpdate);
     }
 
 
     @Override
     public void deleteUser(final Long id) {
-        userRepository.deleteUser(id);
+        userRepository.deleteById(id);
     }
 }
