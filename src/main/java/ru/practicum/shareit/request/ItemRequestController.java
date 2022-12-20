@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
+import ru.practicum.shareit.user.dto.UserDto;
+
+import java.util.Collection;
 
 /**
  * TODO Sprint add-item-requests.
@@ -20,5 +23,10 @@ public class ItemRequestController {
     @PostMapping
     public ResponseEntity<ItemRequestDto> create(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemRequestDto itemRequestDto) {
         return new ResponseEntity<>(itemRequestService.addItemRequest(userId, itemRequestDto), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<Collection<ItemRequestDto>> findItemRequestsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        return new ResponseEntity<Collection<ItemRequestDto>>(itemRequestService.findItemRequestByUserId(userId), HttpStatus.OK);
     }
 }
