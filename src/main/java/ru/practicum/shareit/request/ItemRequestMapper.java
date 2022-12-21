@@ -32,5 +32,19 @@ public class ItemRequestMapper {
                 .build();
     }
 
+    public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
+        return ItemRequestDto.builder()
+                .id(itemRequest.getId())
+                .description(itemRequest.getDescription())
+                .requestorId(itemRequest.getRequestorId())
+                .created(itemRequest.getCreated())
+                .build();
+    }
+
+    public static Collection<ItemRequestDto> toItemRequestDto(Collection<ItemRequest> itemRequests) {
+        return itemRequests.stream()
+                .map(ItemRequestMapper::toItemRequestDto)
+                .collect(Collectors.toUnmodifiableList());
+    }
 
 }

@@ -29,4 +29,9 @@ public class ItemRequestController {
     public ResponseEntity<Collection<ItemRequestDto>> findItemRequestsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return new ResponseEntity<Collection<ItemRequestDto>>(itemRequestService.findItemRequestByUserId(userId), HttpStatus.OK);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<Collection<ItemRequestDto>> findAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        return new ResponseEntity<Collection<ItemRequestDto>>(itemRequestService.findAll(), HttpStatus.OK);
+    }
 }

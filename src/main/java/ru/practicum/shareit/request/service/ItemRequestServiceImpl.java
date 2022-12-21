@@ -56,4 +56,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestDtos;
     }
 
+    @Override
+    public Collection<ItemRequestDto> findAll() {
+        return ItemRequestMapper.toItemRequestDto(itemRequestRepository.findAll());
+    }
+
 }
