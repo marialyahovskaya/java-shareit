@@ -2,7 +2,9 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.PaginationHelper;
 import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -70,7 +72,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<BookingDto> findBookingsByBookerId(Long userId, String state) {
+    public Collection<BookingDto> findBookingsByBookerId(Long userId, String state, int from, int size) {
         BookingRequestState requestedState;
         try {
             requestedState = BookingRequestState.valueOf(state);
@@ -81,21 +83,26 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new NotFoundException("User not found");
         }
+        if (size == 0) {
+            throw new ValidationException("Size is zero");
+        }
+        Pageable pageable = PaginationHelper.makePageable(from, size);
         switch (requestedState) {
             case ALL:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerOrderByStartDesc(user.get()));
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerOrderByStartDesc(user.get(), pageable));
             case CURRENT:
                 return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(user.get(),
                         LocalDateTime.now(),
-                        LocalDateTime.now()));
+                        LocalDateTime.now(),
+                        pageable));
             case PAST:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndEndIsBeforeOrderByStartDesc(user.get(), LocalDateTime.now()));
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndEndIsBeforeOrderByStartDesc(user.get(), LocalDateTime.now(), pageable));
             case FUTURE:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(user.get(), LocalDateTime.now()));
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(user.get(), LocalDateTime.now(), pageable));
             case WAITING:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.WAITING));
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.WAITING, pageable));
             case REJECTED:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.REJECTED));
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.REJECTED, pageable));
         }
         throw new ValidationException("Invalid booking state");
     }

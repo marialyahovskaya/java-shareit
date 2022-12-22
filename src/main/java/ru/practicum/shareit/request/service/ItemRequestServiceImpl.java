@@ -46,7 +46,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("User not found");
         }
-        Collection<ItemRequest> itemRequests = itemRequestRepository.findByRequestorId(userId);
+        Collection<ItemRequest> itemRequests = itemRequestRepository.findByRequestorIdOrderByCreatedDesc(userId);
         List<ItemRequestDto> itemRequestDtos = new ArrayList<>();
         for(ItemRequest itemRequest: itemRequests){
             ItemRequestDto dto = ItemRequestMapper.toItemRequestDto(itemRequest, ItemMapper.toItemDto(itemRepository.findByRequestId(itemRequest.getId())));

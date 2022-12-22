@@ -31,8 +31,10 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Collection<BookingDto>> findBookingsByBookerId(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                                         @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return new ResponseEntity<>(bookingService.findBookingsByBookerId(userId, state), HttpStatus.OK);
+                                                                         @RequestParam(required = false, defaultValue = "ALL") String state,
+                                                                         @RequestParam(required = false, defaultValue = "0") int from,
+                                                                         @RequestParam(required = false, defaultValue = "100") int size) {
+        return new ResponseEntity<>(bookingService.findBookingsByBookerId(userId, state, from, size), HttpStatus.OK);
     }
 
     @GetMapping("/owner")
