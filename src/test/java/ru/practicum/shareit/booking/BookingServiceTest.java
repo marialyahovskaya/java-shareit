@@ -61,7 +61,7 @@ public class BookingServiceTest {
 
 
     @Test
-    void testAddBooking() {
+    void shouldAddBooking() {
 
         BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
         Mockito
