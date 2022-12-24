@@ -10,7 +10,7 @@ public interface ItemRequestService {
 
     Collection<ItemRequestDto> findItemRequestByUserId(Long userId);
 
-   // Collection<ItemRequestDto> findAll(Long userId);
+    Collection<ItemRequestDto> findAll(Long userId, int from, int size);
 
-    Collection<ItemRequestDto> findAll();
+    ItemRequestDto findById(Long userId, Long id);
 }

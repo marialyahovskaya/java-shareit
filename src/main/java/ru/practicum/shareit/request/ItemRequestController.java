@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
-import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.Collection;
 
@@ -30,8 +29,15 @@ public class ItemRequestController {
         return new ResponseEntity<Collection<ItemRequestDto>>(itemRequestService.findItemRequestByUserId(userId), HttpStatus.OK);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<ItemRequestDto> findItemRequestByRequestId(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long id) {
+        return new ResponseEntity<ItemRequestDto>(itemRequestService.findById(userId, id), HttpStatus.OK);
+    }
+
     @GetMapping("/all")
-    public ResponseEntity<Collection<ItemRequestDto>> findAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return new ResponseEntity<Collection<ItemRequestDto>>(itemRequestService.findAll(), HttpStatus.OK);
+    public ResponseEntity<Collection<ItemRequestDto>> findAll(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                              @RequestParam(required = false, defaultValue = "0") int from,
+                                                              @RequestParam(required = false, defaultValue = "100") int size) {
+        return new ResponseEntity<Collection<ItemRequestDto>>(itemRequestService.findAll(userId, from, size), HttpStatus.OK);
     }
 }
