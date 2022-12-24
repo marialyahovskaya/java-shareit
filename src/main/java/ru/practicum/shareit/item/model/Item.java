@@ -28,7 +28,7 @@ public class Item {
     @Column(nullable = false)
     private String description;
 
-    @Column(name = "request_id", nullable = false)
+    @Column(name = "request_id")
     private Long requestId;
 
     @Column(name = "is_available", nullable = false)

@@ -46,7 +46,7 @@ public class ItemServiceImpl implements ItemService {
         }
         Item itemToAdd = ItemMapper.toItem(userId, itemDto);
         if (itemToAdd.getAvailable() == null) {
-            throw new ValidationException("Item is not available");
+            throw new ValidationException("Item availability is undefined");
         }
         Item createdItem = itemRepository.save(itemToAdd);
         return ItemMapper.toItemDto(createdItem);

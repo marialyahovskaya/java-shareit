@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -47,7 +48,7 @@ public class BookingServiceTest {
     Booking screwdriverBooking = new Booking(
             1L, start, end, screwdriver, john, BookingState.WAITING);
 
-    BookingCreationDto screwDriverBookingCreationDto = new BookingCreationDto(
+    BookingCreationDto screwdriverBookingCreationDto = new BookingCreationDto(
             1L, start, end);
 
     @Mock
@@ -59,11 +60,16 @@ public class BookingServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    private BookingService bookingService;
+
+    @BeforeEach
+    void setUp() {
+        bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
+    }
 
     @Test
     void shouldAddBooking() {
 
-        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
         Mockito
                 .when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
@@ -76,7 +82,7 @@ public class BookingServiceTest {
                 .when(bookingRepository.save(any()))
                 .thenReturn(screwdriverBooking);
 
-        BookingDto bookingDto = bookingService.addBooking(johnId, screwDriverBookingCreationDto);
+        BookingDto bookingDto = bookingService.addBooking(johnId, screwdriverBookingCreationDto);
 
         assertThat(bookingDto.getId(), equalTo(1L));
         assertThat(bookingDto.getStart(), equalTo(start));
@@ -87,7 +93,7 @@ public class BookingServiceTest {
         assertThat(bookingDto.getStatus(), equalTo(BookingState.WAITING));
 
 
-        Booking booking = BookingMapper.toBooking(johnId, screwDriverBookingCreationDto);
+        Booking booking = BookingMapper.toBooking(johnId, screwdriverBookingCreationDto);
         booking.setItem(screwdriver);
         booking.setBooker(john);
         Mockito.verify(bookingRepository, Mockito.times(1))
@@ -96,7 +102,6 @@ public class BookingServiceTest {
 
     @Test
     void addBookingShouldThrowNotFoundExceptionWhenItemNotFound() {
-        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
 
         Mockito
                 .when(itemRepository.findById(anyLong()))
@@ -104,15 +109,13 @@ public class BookingServiceTest {
 
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
-                () -> bookingService.addBooking(johnId, screwDriverBookingCreationDto));
+                () -> bookingService.addBooking(johnId, screwdriverBookingCreationDto));
 
         Assertions.assertEquals("Item not found", exception.getMessage());
     }
 
     @Test
     void addBookingShouldThrowNotFoundExceptionWhenUserNotFound() {
-        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
-
 
         Mockito
                 .when(itemRepository.findById(anyLong()))
@@ -123,15 +126,13 @@ public class BookingServiceTest {
 
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
-                () -> bookingService.addBooking(johnId, screwDriverBookingCreationDto));
+                () -> bookingService.addBooking(johnId, screwdriverBookingCreationDto));
 
         Assertions.assertEquals("User not found", exception.getMessage());
     }
 
     @Test
     void addBookingShouldThrowNotFoundExceptionWhenItemIsUnavailable() {
-        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
-
 
         Mockito
                 .when(itemRepository.findById(anyLong()))
@@ -142,15 +143,13 @@ public class BookingServiceTest {
 
         final ValidationException exception = Assertions.assertThrows(
                 ValidationException.class,
-                () -> bookingService.addBooking(johnId, screwDriverBookingCreationDto));
+                () -> bookingService.addBooking(johnId, screwdriverBookingCreationDto));
 
         Assertions.assertEquals("Cannot book unavailable item", exception.getMessage());
     }
 
     @Test
     void addBookingShouldThrowNotFoundExceptionWhenOwnerTriesToBookHisItem() {
-        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
-
 
         Mockito
                 .when(itemRepository.findById(anyLong()))
@@ -161,15 +160,13 @@ public class BookingServiceTest {
 
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
-                () -> bookingService.addBooking(jackId, screwDriverBookingCreationDto));
+                () -> bookingService.addBooking(jackId, screwdriverBookingCreationDto));
 
         Assertions.assertEquals("You can't book this item", exception.getMessage());
     }
 
     @Test
     void findBookingShouldReturnBookingDataForBooker() {
-
-        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
 
         Mockito
                 .when(bookingRepository.findById(anyLong()))
@@ -191,8 +188,6 @@ public class BookingServiceTest {
 
     @Test
     void findBookingShouldReturnBookingDataForOwner() {
-
-        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
 
         Mockito
                 .when(bookingRepository.findById(anyLong()))
@@ -216,8 +211,6 @@ public class BookingServiceTest {
     @Test
     void findBookingShouldThrowNotFoundExceptionWhenBookingNotFound() {
 
-        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
-
         Mockito
                 .when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
@@ -231,8 +224,6 @@ public class BookingServiceTest {
 
     @Test
     void findBookingShouldThrowNotFoundExceptionWhenUserIsNotBookerOrOwner() {
-
-        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
 
         Mockito
                 .when(bookingRepository.findById(anyLong()))
