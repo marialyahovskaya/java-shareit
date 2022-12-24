@@ -33,7 +33,7 @@ public class BookingServiceTest {
     LocalDateTime start = LocalDateTime.now().plusDays(1);
     LocalDateTime end = LocalDateTime.now().plusDays(2);
 
-    Long johnId = 1l;
+    Long johnId = 1L;
     Long jackId = 2L;
 
     Item screwdriver = new Item(
@@ -166,5 +166,84 @@ public class BookingServiceTest {
         Assertions.assertEquals("You can't book this item", exception.getMessage());
     }
 
+    @Test
+    void findBookingShouldReturnBookingDataForBooker() {
+
+        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
+
+        Mockito
+                .when(bookingRepository.findById(anyLong()))
+                .thenReturn(Optional.of(screwdriverBooking));
+
+        BookingDto bookingDto = bookingService.findBooking(johnId, 3L);
+
+        assertThat(bookingDto.getId(), equalTo(1L));
+        assertThat(bookingDto.getStart(), equalTo(start));
+        assertThat(bookingDto.getEnd(), equalTo(end));
+        assertThat(bookingDto.getItem(), equalTo(screwdriver));
+        assertThat(bookingDto.getBookerId(), equalTo(1L));
+        assertThat(bookingDto.getBooker(), equalTo(john));
+        assertThat(bookingDto.getStatus(), equalTo(BookingState.WAITING));
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+                .findById(3L);
     }
+
+    @Test
+    void findBookingShouldReturnBookingDataForOwner() {
+
+        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
+
+        Mockito
+                .when(bookingRepository.findById(anyLong()))
+                .thenReturn(Optional.of(screwdriverBooking));
+
+        BookingDto bookingDto = bookingService.findBooking(jackId, 3L);
+
+        assertThat(bookingDto.getId(), equalTo(1L));
+        assertThat(bookingDto.getStart(), equalTo(start));
+        assertThat(bookingDto.getEnd(), equalTo(end));
+        assertThat(bookingDto.getItem(), equalTo(screwdriver));
+        assertThat(bookingDto.getBookerId(), equalTo(1L));
+        assertThat(bookingDto.getBooker(), equalTo(john));
+        assertThat(bookingDto.getStatus(), equalTo(BookingState.WAITING));
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+                .findById(3L);
+
+    }
+
+    @Test
+    void findBookingShouldThrowNotFoundExceptionWhenBookingNotFound() {
+
+        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
+
+        Mockito
+                .when(bookingRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        final NotFoundException exception = Assertions.assertThrows(
+                NotFoundException.class,
+                () -> bookingService.findBooking(jackId, 3L));
+
+        Assertions.assertEquals("Booking not found", exception.getMessage());
+    }
+
+    @Test
+    void findBookingShouldThrowNotFoundExceptionWhenUserIsNotBookerOrOwner() {
+
+        BookingService bookingService = new BookingServiceImpl(bookingRepository, itemRepository, userRepository);
+
+        Mockito
+                .when(bookingRepository.findById(anyLong()))
+                .thenReturn(Optional.of(screwdriverBooking));
+
+        final NotFoundException exception = Assertions.assertThrows(
+                NotFoundException.class,
+                () -> bookingService.findBooking(99L, 3L));
+
+        Assertions.assertEquals("Booking not found", exception.getMessage());
+    }
+
+}
 

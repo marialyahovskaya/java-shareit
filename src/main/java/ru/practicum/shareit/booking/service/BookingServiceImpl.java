@@ -46,7 +46,7 @@ public class BookingServiceImpl implements BookingService {
         if (!item.get().getAvailable()) {
             throw new ValidationException("Cannot book unavailable item");
         }
-        if (userId.equals(item.get().getUserId())) {
+        if (userId.equals(item.get().getOwnerId())) {
             throw new NotFoundException("You can't book this item");
         }
 
@@ -64,8 +64,10 @@ public class BookingServiceImpl implements BookingService {
         if (booking.isEmpty()) {
             throw new NotFoundException("Booking not found");
         }
-        if (!booking.get().getBooker().getId().equals(userId) &&
-                !booking.get().getItem().getUserId().equals(userId)) {
+        Boolean userIsBooker = booking.get().getBooker().getId().equals(userId);
+        Boolean userIsOwner = booking.get().getItem().getOwnerId().equals(userId);
+
+        if (!userIsBooker && !userIsOwner) {
             throw new NotFoundException("Booking not found");
         }
         return BookingMapper.toBookingDto(booking.get());
@@ -156,7 +158,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking.isEmpty()) {
             throw new NotFoundException("Booking not found");
         }
-        if (!userId.equals(booking.get().getItem().getUserId())) {
+        if (!userId.equals(booking.get().getItem().getOwnerId())) {
             throw new NotFoundException("Booking not found");
         }
         if (approved && booking.get().getStatus().equals(BookingState.APPROVED)) {

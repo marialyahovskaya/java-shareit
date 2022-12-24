@@ -88,7 +88,7 @@ public class ItemServiceImpl implements ItemService {
         }
         Optional<Booking> lastBooking = Optional.empty();
         Optional<Booking> nextBooking = Optional.empty();
-        if (userId.equals(item.get().getUserId())) {
+        if (userId.equals(item.get().getOwnerId())) {
             lastBooking = bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(id, LocalDateTime.now());
             nextBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(id, LocalDateTime.now());
         }
@@ -128,7 +128,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Item not found");
         }
         Item itemToUpdate = loadedItem.get();
-        if (!userId.equals(itemToUpdate.getUserId())) {
+        if (!userId.equals(itemToUpdate.getOwnerId())) {
             throw new NotFoundException("Item not found");
         }
         if (itemDto.getName() != null) {

@@ -37,7 +37,7 @@ CREATE TABLE if NOT EXISTS public.comments (
 CREATE TABLE if NOT EXISTS public.requests (
                                  id int8 NOT NULL GENERATED ALWAYS AS IDENTITY,
                                  description varchar NOT NULL,
-                                 requestor_id int8 NOT NULL,
+                                 request_id int8 NOT NULL,
                                  created timestamp without time zone,
                                  CONSTRAINT requests_pk PRIMARY KEY (id)
 );
