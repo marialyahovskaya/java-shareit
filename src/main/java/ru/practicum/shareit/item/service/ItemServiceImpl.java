@@ -98,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Collection<ItemDto> findItemsByUserId(final Long userId) {
         log.info("trying to find items of user with id " + userId);
-        return itemRepository.findByUserIdOrderByIdAsc(userId).stream()
+        return itemRepository.findByOwnerIdOrderByIdAsc(userId).stream()
                 .map(item -> ItemMapper.toItemDto(item,
                         bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now()),
                         bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(item.getId(), LocalDateTime.now())))

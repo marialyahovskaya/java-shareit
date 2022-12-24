@@ -133,20 +133,20 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageable = PaginationHelper.makePageable(from, size);
         switch (requestedState) {
             case ALL:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemUserIdOrderByStartDesc(userId, pageable));
+                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdOrderByStartDesc(userId, pageable));
             case CURRENT:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemUserIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId,
+                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId,
                         LocalDateTime.now(),
                         LocalDateTime.now(),
                         pageable));
             case PAST:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemUserIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now(), pageable));
+                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now(), pageable));
             case FUTURE:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemUserIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now(), pageable));
+                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now(), pageable));
             case WAITING:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemUserIdAndStatusOrderByStartDesc(userId, BookingState.WAITING, pageable));
+                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingState.WAITING, pageable));
             case REJECTED:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemUserIdAndStatusOrderByStartDesc(userId, BookingState.REJECTED, pageable));
+                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingState.REJECTED, pageable));
         }
         throw new ValidationException("Invalid booking state");
 
