@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.request.unit;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +11,8 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
@@ -31,7 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 @ExtendWith(MockitoExtension.class)
-public class ItemRequestTest {
+public class ItemRequestServiceTest {
 
     Long johnId = 1L;
 
@@ -42,7 +44,7 @@ public class ItemRequestTest {
     Item screwdriver = new Item(
             1L, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
 
-    ItemRequestDto screwdriverRequestCreationDto = new ItemRequestDto(null,
+    ItemRequestDto guitarRequestCreationDto = new ItemRequestDto(null,
             "Дайте погонять гитару",
             johnId,
             null,
@@ -77,10 +79,10 @@ public class ItemRequestTest {
                 .when(itemRequestRepository.save(any()))
                 .thenReturn(screwdriverRequest);
 
-        ItemRequestDto requestDto = itemRequestService.addItemRequest(johnId, screwdriverRequestCreationDto);
+        ItemRequestDto requestDto = itemRequestService.addItemRequest(johnId, guitarRequestCreationDto);
 
         assertThat(requestDto.getId(), notNullValue());
-        assertThat(requestDto.getDescription(), equalTo(screwdriverRequestCreationDto.getDescription()));
+        assertThat(requestDto.getDescription(), equalTo(guitarRequestCreationDto.getDescription()));
         assertThat(requestDto.getRequestorId(), equalTo(johnId));
         assertThat(requestDto.getCreated(), notNullValue());
         assertThat(requestDto.getItems(), hasSize(0));
@@ -97,7 +99,7 @@ public class ItemRequestTest {
 
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
-                () -> itemRequestService.addItemRequest(johnId, screwdriverRequestCreationDto));
+                () -> itemRequestService.addItemRequest(johnId, guitarRequestCreationDto));
 
         Assertions.assertEquals("User not found", exception.getMessage());
     }

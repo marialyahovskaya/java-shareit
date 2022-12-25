@@ -1,10 +1,11 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.unit;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemValidator;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.UserValidator;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;

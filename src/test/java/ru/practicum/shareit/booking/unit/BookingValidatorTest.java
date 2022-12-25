@@ -1,7 +1,8 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.unit;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.booking.BookingValidator;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.exception.ValidationException;
 
