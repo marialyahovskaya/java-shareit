@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -24,10 +23,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -72,7 +69,7 @@ public class ItemServiceImpl implements ItemService {
             }
         }
         if (!hasEverBooked) {
-            throw new ValidationException("Cannot creat comment");
+            throw new ValidationException("Cannot create comment");
         }
         Comment comment = CommentMapper.toComment(userId, itemId, commentCreationDto);
         comment.setAuthor(user.get());
@@ -96,8 +93,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> findItemsByUserId(final Long userId) {
-        log.info("trying to find items of user with id " + userId);
+    public Collection<ItemDto> findItemsByOwnerId(final Long userId) {
         return itemRepository.findByOwnerIdOrderByIdAsc(userId).stream()
                 .map(item -> ItemMapper.toItemDto(item,
                         bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(item.getId(), LocalDateTime.now()),

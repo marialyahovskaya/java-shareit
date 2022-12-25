@@ -14,7 +14,7 @@ public interface ItemService {
 
     ItemDto findItemById(final Long userId, final Long id);
 
-    Collection<ItemDto> findItemsByUserId(final Long userId);
+    Collection<ItemDto> findItemsByOwnerId(final Long userId);
 
     Collection<ItemDto> search(final String query);
 

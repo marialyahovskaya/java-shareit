@@ -89,7 +89,7 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Size is zero");
         }
         if (from < 0) {
-            throw new ValidationException("from cannot be negative");
+            throw new ValidationException("From cannot be negative");
         }
         Pageable pageable = PaginationHelper.makePageable(from, size);
         switch (requestedState) {

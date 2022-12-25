@@ -8,7 +8,7 @@ public interface ItemRequestService {
 
     ItemRequestDto addItemRequest(final Long userId, final ItemRequestDto itemRequest);
 
-    Collection<ItemRequestDto> findItemRequestByUserId(Long userId);
+    Collection<ItemRequestDto> findItemRequestsByUserId(Long userId);
 
     Collection<ItemRequestDto> findAll(Long userId, int from, int size);
 

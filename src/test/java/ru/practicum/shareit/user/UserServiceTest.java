@@ -31,26 +31,18 @@ import static org.mockito.ArgumentMatchers.*;
 public class UserServiceTest {
 
     Long johnId = 1L;
-
     Long jackId = 1L;
 
-    User john = new User(
-            johnId, "JOHN", "john@email.com");
+    User john = new User(johnId, "JOHN", "john@email.com");
+    User jack = new User(jackId, "JACK", "jack@email.com");
 
+    UserDto johnDto = new UserDto(johnId, "JOHN", "john@email.com");
 
-    User jack = new User(
-            jackId, "JACK", "jack@email.com");
-    UserDto johnDto = new UserDto(
-            johnId, "JOHN", "john@email.com");
+    UserDto jackDto = new UserDto(jackId, "JACK", "jack@email.com");
 
-    UserDto jackDto = new UserDto(
-            jackId, "JACK", "jack@email.com");
+    UserDto johnCreationDto = new UserDto(null, "JOHN", "john@email.com");
 
-    UserDto johnCreationDto = new UserDto(
-            null, "JOHN", "john@email.com");
-
-    User johnCreationEntity = new User(
-            null, "JOHN", "john@email.com");
+    User johnCreationEntity = new User(null, "JOHN", "john@email.com");
 
     @Mock
     private UserRepository userRepository;

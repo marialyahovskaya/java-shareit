@@ -45,7 +45,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public Collection<ItemRequestDto> findItemRequestByUserId(Long userId) {
+    public Collection<ItemRequestDto> findItemRequestsByUserId(Long userId) {
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("User not found");
         }

@@ -6,16 +6,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Entity
 @Table(name = "requests", schema = "public")
 @Setter
 @Getter
 @ToString
-@NoArgsConstructor
 @EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemRequest {
 
     @Id

@@ -35,7 +35,7 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<Collection<ItemDto>> findItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return new ResponseEntity<>(itemService.findItemsByUserId(userId), HttpStatus.OK);
+        return new ResponseEntity<>(itemService.findItemsByOwnerId(userId), HttpStatus.OK);
     }
 
     @GetMapping("/search")

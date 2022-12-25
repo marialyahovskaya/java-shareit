@@ -9,9 +9,6 @@ import ru.practicum.shareit.request.service.ItemRequestService;
 
 import java.util.Collection;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/requests")
@@ -26,7 +23,7 @@ public class ItemRequestController {
 
     @GetMapping
     public ResponseEntity<Collection<ItemRequestDto>> findItemRequestsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return new ResponseEntity<Collection<ItemRequestDto>>(itemRequestService.findItemRequestByUserId(userId), HttpStatus.OK);
+        return new ResponseEntity<Collection<ItemRequestDto>>(itemRequestService.findItemRequestsByUserId(userId), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
