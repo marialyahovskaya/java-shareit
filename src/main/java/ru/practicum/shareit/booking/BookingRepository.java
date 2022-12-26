@@ -41,9 +41,9 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
 
     List<Booking> findByItemOwnerIdAndStartIsAfterOrderByStartDesc(Long userId, LocalDateTime start, Pageable pageable);
 
-    Optional<Booking> findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(Long id, LocalDateTime end);
+    Optional<Booking> findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(Long itemId, LocalDateTime end);
 
-    Optional<Booking> findFirstByItem_IdAndStartIsAfterOrderByStartAsc(Long id, LocalDateTime end);
+    Optional<Booking> findFirstByItem_IdAndStartIsAfterOrderByStartAsc(Long itemId, LocalDateTime end);
 
     List<Booking> findByItem_IdAndEndIsBefore(Long itemId, LocalDateTime end);
 

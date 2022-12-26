@@ -23,7 +23,7 @@ class BookingDtoJsonTest {
     private JacksonTester<BookingDto> json;
 
     @Test
-    void testUserDto() throws Exception {
+    void testBookingDto() throws Exception {
 
         Long johnId = 1L;
         Long jackId = 2L;

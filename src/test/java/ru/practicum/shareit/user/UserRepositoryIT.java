@@ -15,14 +15,14 @@ import static org.hamcrest.Matchers.hasSize;
 @DataJpaTest
 class UserRepositoryIT {
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void addUsers() {
         userRepository.save(new User(null, "John", "john.doe@email.com"));
-        userRepository.save(new User(null, "Jack", "john.foe@email.com"));
+        userRepository.save(new User(null, "Jack", "jack.foe@email.com"));
     }
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Test
     void findByEmailContainingIgnoreCase() {
