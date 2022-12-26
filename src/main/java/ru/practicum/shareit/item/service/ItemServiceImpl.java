@@ -78,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto findItemById(final Long userId, final Long id) {
+    public ItemDto findById(final Long userId, final Long id) {
         Optional<Item> item = itemRepository.findById(id);
         if (item.isEmpty()) {
             throw new NotFoundException("Item not found");

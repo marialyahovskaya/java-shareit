@@ -12,7 +12,7 @@ public interface ItemService {
 
     ItemDto patchItem(final Long userId, final Long id, final ItemDto itemDto);
 
-    ItemDto findItemById(final Long userId, final Long id);
+    ItemDto findById(final Long userId, final Long id);
 
     Collection<ItemDto> findItemsByOwnerId(final Long userId);
 

@@ -23,17 +23,17 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<UserDto>> findAll() {
+    public ResponseEntity<Collection<UserDto>> findAllUsers() {
         return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody UserDto userDto) throws ValidationException {
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) throws ValidationException {
         return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.patchUser(id, userDto), HttpStatus.OK);
     }
 

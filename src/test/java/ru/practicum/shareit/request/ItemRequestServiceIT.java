@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request.integration;
+package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.*;
         properties = "db.name=test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class ItemRequestServiceTest {
+public class ItemRequestServiceIT {
 
     private final EntityManager em;
 

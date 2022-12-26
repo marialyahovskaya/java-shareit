@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.unit;
+package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -6,13 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.PaginationHelper;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.enums.BookingState;
@@ -33,11 +29,11 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.mockito.ArgumentMatchers.*;
-
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BookingServiceTest {
@@ -63,10 +59,8 @@ public class BookingServiceTest {
 
     @Mock
     private BookingRepository bookingRepository;
-
     @Mock
     private ItemRepository itemRepository;
-
     @Mock
     private UserRepository userRepository;
 
@@ -79,18 +73,15 @@ public class BookingServiceTest {
 
     @Test
     void shouldAddBooking() {
-
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
-
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-
-        Mockito
-                .when(bookingRepository.save(any()))
+        when(bookingRepository.save(any()))
                 .thenReturn(screwdriverBooking);
+        Booking booking = BookingMapper.toBooking(johnId, screwdriverBookingCreationDto);
+        booking.setItem(screwdriver);
+        booking.setBooker(john);
 
         BookingDto bookingDto = bookingService.addBooking(johnId, screwdriverBookingCreationDto);
 
@@ -101,20 +92,12 @@ public class BookingServiceTest {
         assertThat(bookingDto.getBookerId(), equalTo(1L));
         assertThat(bookingDto.getBooker(), equalTo(john));
         assertThat(bookingDto.getStatus(), equalTo(BookingState.WAITING));
-
-
-        Booking booking = BookingMapper.toBooking(johnId, screwdriverBookingCreationDto);
-        booking.setItem(screwdriver);
-        booking.setBooker(john);
-        Mockito.verify(bookingRepository, Mockito.times(1))
-                .save(booking);
+        verify(bookingRepository, times(1)).save(booking);
     }
 
     @Test
     void addBookingShouldThrowNotFoundExceptionWhenItemNotFound() {
-
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -126,12 +109,9 @@ public class BookingServiceTest {
 
     @Test
     void addBookingShouldThrowNotFoundExceptionWhenUserNotFound() {
-
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -143,12 +123,9 @@ public class BookingServiceTest {
 
     @Test
     void addBookingShouldThrowNotFoundExceptionWhenItemIsUnavailable() {
-
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(unavailableScrewdriver));
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
 
         final ValidationException exception = Assertions.assertThrows(
@@ -160,12 +137,9 @@ public class BookingServiceTest {
 
     @Test
     void addBookingShouldThrowNotFoundExceptionWhenOwnerTriesToBookHisItem() {
-
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -177,9 +151,7 @@ public class BookingServiceTest {
 
     @Test
     void findBookingShouldReturnBookingDataForBooker() {
-
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriverBooking));
 
         BookingDto bookingDto = bookingService.findBooking(johnId, 3L);
@@ -192,15 +164,13 @@ public class BookingServiceTest {
         assertThat(bookingDto.getBooker(), equalTo(john));
         assertThat(bookingDto.getStatus(), equalTo(BookingState.WAITING));
 
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findById(3L);
     }
 
     @Test
     void findBookingShouldReturnBookingDataForOwner() {
-
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriverBooking));
 
         BookingDto bookingDto = bookingService.findBooking(jackId, 3L);
@@ -213,16 +183,13 @@ public class BookingServiceTest {
         assertThat(bookingDto.getBooker(), equalTo(john));
         assertThat(bookingDto.getStatus(), equalTo(BookingState.WAITING));
 
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findById(3L);
-
     }
 
     @Test
     void findBookingShouldThrowNotFoundExceptionWhenBookingNotFound() {
-
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -234,9 +201,7 @@ public class BookingServiceTest {
 
     @Test
     void findBookingShouldThrowNotFoundExceptionWhenUserIsNotBookerOrOwner() {
-
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriverBooking));
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -248,11 +213,9 @@ public class BookingServiceTest {
 
     @Test
     void shouldFindAllBookingsByBookerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByBookerOrderByStartDesc(any(), any()))
+        when(bookingRepository.findByBookerOrderByStartDesc(any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByBookerId(johnId, "ALL", 0, 100);
@@ -269,17 +232,15 @@ public class BookingServiceTest {
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
 
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByBookerOrderByStartDesc(john, pageable);
     }
 
     @Test
     void shouldFindCurrentBookingsByBookerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(any(), any(), any(), any()))
+        when(bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(any(), any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByBookerId(johnId, "CURRENT", 0, 100);
@@ -294,8 +255,7 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(ArgumentMatchers.any(User.class),
                         ArgumentMatchers.any(LocalDateTime.class),
                         ArgumentMatchers.any(LocalDateTime.class),
@@ -305,11 +265,9 @@ public class BookingServiceTest {
 
     @Test
     void shouldFindPastBookingsByBookerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByBookerAndEndIsBeforeOrderByStartDesc(any(), any(), any()))
+        when(bookingRepository.findByBookerAndEndIsBeforeOrderByStartDesc(any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByBookerId(johnId, "PAST", 0, 100);
@@ -324,8 +282,7 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByBookerAndEndIsBeforeOrderByStartDesc(ArgumentMatchers.any(User.class),
                         ArgumentMatchers.any(LocalDateTime.class),
                         ArgumentMatchers.any(Pageable.class)
@@ -334,11 +291,9 @@ public class BookingServiceTest {
 
     @Test
     void shouldFindFutureBookingsByBookerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(any(), any(), any()))
+        when(bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByBookerId(johnId, "FUTURE", 0, 100);
@@ -353,8 +308,7 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByBookerAndStartIsAfterOrderByStartDesc(ArgumentMatchers.any(User.class),
                         ArgumentMatchers.any(LocalDateTime.class),
                         ArgumentMatchers.any(Pageable.class)
@@ -363,11 +317,9 @@ public class BookingServiceTest {
 
     @Test
     void shouldFindWaitingBookingsByBookerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByBookerAndStatusOrderByStartDesc(any(), any(), any()))
+        when(bookingRepository.findByBookerAndStatusOrderByStartDesc(any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByBookerId(johnId, "WAITING", 0, 100);
@@ -383,18 +335,15 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByBookerAndStatusOrderByStartDesc(john, BookingState.WAITING, pageable);
     }
 
     @Test
     void shouldFindRejectedBookingsByBookerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByBookerAndStatusOrderByStartDesc(any(), any(), any()))
+        when(bookingRepository.findByBookerAndStatusOrderByStartDesc(any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByBookerId(johnId, "REJECTED", 0, 100);
@@ -410,8 +359,7 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByBookerAndStatusOrderByStartDesc(john, BookingState.REJECTED, pageable);
     }
 
@@ -427,8 +375,7 @@ public class BookingServiceTest {
 
     @Test
     void findBookingsByBookerIdShouldThrowNotFoundExceptionWhenUserNotFound() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
@@ -439,8 +386,7 @@ public class BookingServiceTest {
 
     @Test
     void findBookingsByBookerIdShouldThrowValidationExceptionWhenSizeIsZero() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
         final ValidationException exception = Assertions.assertThrows(
                 ValidationException.class,
@@ -451,8 +397,7 @@ public class BookingServiceTest {
 
     @Test
     void findBookingsByBookerIdShouldThrowValidationExceptionWhenFromIsNegative() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
         final ValidationException exception = Assertions.assertThrows(
                 ValidationException.class,
@@ -464,11 +409,9 @@ public class BookingServiceTest {
 
     @Test
     void shouldFindAllBookingsByOwnerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByItemOwnerIdOrderByStartDesc(anyLong(), any()))
+        when(bookingRepository.findByItemOwnerIdOrderByStartDesc(anyLong(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByOwnerId(johnId, "ALL", 0, 100);
@@ -484,18 +427,15 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByItemOwnerIdOrderByStartDesc(johnId, pageable);
     }
 
     @Test
     void shouldFindCurrentBookingsByOwnerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(any(), any(), any(), any()))
+        when(bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(any(), any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByOwnerId(johnId, "CURRENT", 0, 100);
@@ -510,8 +450,7 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(ArgumentMatchers.anyLong(),
                         ArgumentMatchers.any(LocalDateTime.class),
                         ArgumentMatchers.any(LocalDateTime.class),
@@ -521,11 +460,9 @@ public class BookingServiceTest {
 
     @Test
     void shouldFindPastBookingsByOwnerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByItemOwnerIdAndEndIsBeforeOrderByStartDesc(any(), any(), any()))
+        when(bookingRepository.findByItemOwnerIdAndEndIsBeforeOrderByStartDesc(any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByOwnerId(johnId, "PAST", 0, 100);
@@ -540,8 +477,7 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByItemOwnerIdAndEndIsBeforeOrderByStartDesc(anyLong(),
                         ArgumentMatchers.any(LocalDateTime.class),
                         ArgumentMatchers.any(Pageable.class)
@@ -550,11 +486,9 @@ public class BookingServiceTest {
 
     @Test
     void shouldFindFutureBookingsByOwnerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByItemOwnerIdAndStartIsAfterOrderByStartDesc(any(), any(), any()))
+        when(bookingRepository.findByItemOwnerIdAndStartIsAfterOrderByStartDesc(any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByOwnerId(johnId, "FUTURE", 0, 100);
@@ -569,8 +503,7 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByItemOwnerIdAndStartIsAfterOrderByStartDesc(anyLong(),
                         ArgumentMatchers.any(LocalDateTime.class),
                         ArgumentMatchers.any(Pageable.class)
@@ -579,11 +512,9 @@ public class BookingServiceTest {
 
     @Test
     void shouldFindWaitingBookingsByOwnerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(any(), any(), any()))
+        when(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByOwnerId(johnId, "WAITING", 0, 100);
@@ -599,18 +530,15 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByItemOwnerIdAndStatusOrderByStartDesc(johnId, BookingState.WAITING, pageable);
     }
 
     @Test
     void shouldFindRejectedBookingsByOwnerId() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(any(), any(), any()))
+        when(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(any(), any(), any()))
                 .thenReturn(List.of(screwdriverBooking));
 
         Collection<BookingDto> bookings = bookingService.findBookingsByOwnerId(johnId, "REJECTED", 0, 100);
@@ -626,8 +554,7 @@ public class BookingServiceTest {
                 hasProperty("booker", equalTo(screwdriverBooking.getBooker())),
                 hasProperty("status", equalTo(screwdriverBooking.getStatus()))
         )));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findByItemOwnerIdAndStatusOrderByStartDesc(johnId, BookingState.REJECTED, pageable);
     }
 
@@ -643,8 +570,7 @@ public class BookingServiceTest {
 
     @Test
     void findBookingsByOwnerIdShouldThrowNotFoundExceptionWhenUserNotFound() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
@@ -655,8 +581,7 @@ public class BookingServiceTest {
 
     @Test
     void findBookingsByOwnerIdShouldThrowValidationExceptionWhenSizeIsZero() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
         final ValidationException exception = Assertions.assertThrows(
                 ValidationException.class,
@@ -667,8 +592,7 @@ public class BookingServiceTest {
 
     @Test
     void findBookingsByOwnerIdShouldThrowValidationExceptionWhenFromIsNegative() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
         final ValidationException exception = Assertions.assertThrows(
                 ValidationException.class,
@@ -681,11 +605,9 @@ public class BookingServiceTest {
     void updateStatusShouldApproveWaitingBooking() {
         Booking screwdriverApprovedBooking = new Booking(1L, start, end, screwdriver, john, BookingState.APPROVED);
 
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriverBooking));
-        Mockito
-                .when(bookingRepository.save(any()))
+        when(bookingRepository.save(any()))
                 .thenReturn(screwdriverApprovedBooking);
 
         BookingDto bookingDto = bookingService.updateStatus(jackId, 1L, true);
@@ -697,8 +619,7 @@ public class BookingServiceTest {
         assertThat(bookingDto.getBookerId(), equalTo(1L));
         assertThat(bookingDto.getBooker(), equalTo(john));
         assertThat(bookingDto.getStatus(), equalTo(BookingState.APPROVED));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .save(screwdriverApprovedBooking);
     }
 
@@ -707,11 +628,9 @@ public class BookingServiceTest {
         Booking screwdriverRejectedBooking = new Booking(1L, start, end, screwdriver, john, BookingState.REJECTED);
         Booking screwdriverApprovedBooking = new Booking(1L, start, end, screwdriver, john, BookingState.APPROVED);
 
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriverRejectedBooking));
-        Mockito
-                .when(bookingRepository.save(any()))
+        when(bookingRepository.save(any()))
                 .thenReturn(screwdriverApprovedBooking);
 
         BookingDto bookingDto = bookingService.updateStatus(jackId, 1L, true);
@@ -723,8 +642,7 @@ public class BookingServiceTest {
         assertThat(bookingDto.getBookerId(), equalTo(1L));
         assertThat(bookingDto.getBooker(), equalTo(john));
         assertThat(bookingDto.getStatus(), equalTo(BookingState.APPROVED));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .save(screwdriverApprovedBooking);
     }
 
@@ -733,11 +651,9 @@ public class BookingServiceTest {
         Booking screwdriverApprovedBooking = new Booking(1L, start, end, screwdriver, john, BookingState.APPROVED);
         Booking screwdriverRejectedBooking = new Booking(1L, start, end, screwdriver, john, BookingState.REJECTED);
 
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriverApprovedBooking));
-        Mockito
-                .when(bookingRepository.save(any()))
+        when(bookingRepository.save(any()))
                 .thenReturn(screwdriverRejectedBooking);
 
         BookingDto bookingDto = bookingService.updateStatus(jackId, 1L, false);
@@ -749,8 +665,7 @@ public class BookingServiceTest {
         assertThat(bookingDto.getBookerId(), equalTo(1L));
         assertThat(bookingDto.getBooker(), equalTo(john));
         assertThat(bookingDto.getStatus(), equalTo(BookingState.REJECTED));
-
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .save(screwdriverRejectedBooking);
     }
 
@@ -758,11 +673,9 @@ public class BookingServiceTest {
     void updateStatusShouldRejectApprovedBooking() {
         Booking screwdriverRejectedBooking = new Booking(1L, start, end, screwdriver, john, BookingState.REJECTED);
 
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriverBooking));
-        Mockito
-                .when(bookingRepository.save(any()))
+        when(bookingRepository.save(any()))
                 .thenReturn(screwdriverRejectedBooking);
 
         BookingDto bookingDto = bookingService.updateStatus(jackId, 1L, false);
@@ -775,16 +688,14 @@ public class BookingServiceTest {
         assertThat(bookingDto.getBooker(), equalTo(john));
         assertThat(bookingDto.getStatus(), equalTo(BookingState.REJECTED));
 
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .save(screwdriverRejectedBooking);
     }
 
     @Test
     void updateStatusShouldThrowNotFoundExceptionWhenBookingNotFound() {
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-
 
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
@@ -795,8 +706,7 @@ public class BookingServiceTest {
 
     @Test
     void updateStatusShouldThrowNotFoundExceptionWhenUserIsNotTheOwner() {
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriverBooking));
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -810,8 +720,7 @@ public class BookingServiceTest {
     void updateStatusShouldThrowValidationExceptionWhenTryingToApproveAlreadyApprovedBooking() {
         Booking screwdriverApprovedBooking = new Booking(1L, start, end, screwdriver, john, BookingState.APPROVED);
 
-        Mockito
-                .when(bookingRepository.findById(anyLong()))
+        when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriverApprovedBooking));
 
         final ValidationException exception = Assertions.assertThrows(

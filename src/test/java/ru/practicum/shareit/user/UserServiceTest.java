@@ -1,15 +1,13 @@
-package ru.practicum.shareit.user.unit;
+package ru.practicum.shareit.user;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -22,11 +20,11 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -57,9 +55,7 @@ public class UserServiceTest {
 
     @Test
     void shouldAddUser() {
-
-        Mockito
-                .when(userRepository.save(any()))
+        when(userRepository.save(any()))
                 .thenReturn(john);
 
         UserDto userDto = userService.addUser(johnCreationDto);
@@ -68,16 +64,13 @@ public class UserServiceTest {
         assertThat(userDto.getName(), equalTo(johnDto.getName()));
         assertThat(userDto.getEmail(), equalTo(johnDto.getEmail()));
 
-        Mockito.verify(userRepository, Mockito.times(1))
+        verify(userRepository, times(1))
                 .save(johnCreationEntity);
-
     }
 
     @Test
     void shouldFindAllUsers() {
-
-        Mockito
-                .when(userRepository.findAll())
+        when(userRepository.findAll())
                 .thenReturn(List.of(john, jack));
 
         Collection<UserDto> users = userService.findAllUsers();
@@ -94,9 +87,7 @@ public class UserServiceTest {
 
     @Test
     void shouldFindUserById() {
-
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
 
         UserDto userDto = userService.findUserById(johnId);
@@ -105,14 +96,13 @@ public class UserServiceTest {
         assertThat(userDto.getName(), equalTo(johnDto.getName()));
         assertThat(userDto.getEmail(), equalTo(johnDto.getEmail()));
 
-        Mockito.verify(userRepository, Mockito.times(1))
+        verify(userRepository, times(1))
                 .findById(johnId);
     }
 
     @Test
     void findUserByIdShouldThrowNotFoundExceptionWhenUserNotFound() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -124,23 +114,17 @@ public class UserServiceTest {
 
     @Test
     void shouldPatchUser() {
-
         User updatedJohn = new User(
                 johnId, "JOOOHN", "UPDATEDJOOOHN@EMAIL.COM");
 
         UserDto updatedJohnDto = new UserDto(
                 johnId, "JOOOHN", "UPDATEDJOOOHN@EMAIL.COM");
 
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-
-        Mockito
-                .when(userRepository.findByEmailContainingIgnoreCase(anyString()))
+        when(userRepository.findByEmailContainingIgnoreCase(anyString()))
                 .thenReturn(new ArrayList<>());
-
-        Mockito
-                .when(userRepository.save(any()))
+        when(userRepository.save(any()))
                 .thenReturn(updatedJohn);
 
         UserDto userDto = userService.patchUser(johnId, updatedJohnDto);
@@ -149,14 +133,13 @@ public class UserServiceTest {
         assertThat(userDto.getName(), equalTo(updatedJohnDto.getName()));
         assertThat(userDto.getEmail(), equalTo(updatedJohnDto.getEmail()));
 
-        Mockito.verify(userRepository, Mockito.times(1))
+        verify(userRepository, times(1))
                 .save(updatedJohn);
     }
 
     @Test
     void patchUserShouldThrowNotFoundExceptionWhenUserNotFound() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -168,12 +151,9 @@ public class UserServiceTest {
 
     @Test
     void patchUserShouldThrowAlreadyExistsExceptionWhenEmailAlreadyExists() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
-
-        Mockito
-                .when(userRepository.findByEmailContainingIgnoreCase(anyString()))
+        when(userRepository.findByEmailContainingIgnoreCase(anyString()))
                 .thenReturn(List.of(john));
 
         final AlreadyExistsException exception = Assertions.assertThrows(
@@ -187,7 +167,7 @@ public class UserServiceTest {
     void shouldDeleteUser() {
         userService.deleteUser(1L);
 
-        Mockito.verify(userRepository, Mockito.times(1))
+        verify(userRepository, times(1))
                 .deleteById(1L);
     }
 }

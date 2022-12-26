@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.integration;
+package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.*;
         properties = "db.name=test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class ItemServiceTest {
+public class ItemServiceIT {
 
     private final EntityManager em;
     private final ItemService itemService;

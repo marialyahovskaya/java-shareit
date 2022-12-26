@@ -1,11 +1,10 @@
-package ru.practicum.shareit.item.unit;
+package ru.practicum.shareit.item;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -13,8 +12,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.CommentRepository;
-import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentCreationDto;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -35,9 +32,9 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceTest {
@@ -93,11 +90,9 @@ public class ItemServiceTest {
 
     @Test
     void shouldAddItem() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(jack));
-        Mockito
-                .when(itemRepository.save(any()))
+        when(itemRepository.save(any()))
                 .thenReturn(screwdriver);
 
         ItemDto itemDto = itemService.addItem(jackId, screwdriverCreationDto);
@@ -111,14 +106,13 @@ public class ItemServiceTest {
         assertThat(itemDto.getNextBooking(), equalTo(screwdriverDto.getNextBooking()));
         assertThat(itemDto.getComments(), equalTo(screwdriverDto.getComments()));
 
-        Mockito.verify(itemRepository, Mockito.times(1))
+        verify(itemRepository, times(1))
                 .save(screwdriverCreationEntity);
     }
 
     @Test
     void addItemShouldThrowNotFoundExceptionWhenUserNotFound() {
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -130,9 +124,7 @@ public class ItemServiceTest {
 
     @Test
     void addItemShouldThrowNotFoundExceptionWhenItemIsUnavailable() {
-
-        Mockito
-                .when(userRepository.findById(anyLong()))
+        when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(jack));
 
         final ValidationException exception = Assertions.assertThrows(
@@ -149,17 +141,13 @@ public class ItemServiceTest {
         Booking screwdriverBooking = new Booking(1L, start, end, screwdriver, john, BookingState.APPROVED);
         Comment comment = new Comment(1L, "Замечательная отвёртка", john, LocalDateTime.now(), screwdriver.getId());
 
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
-        Mockito
-                .when(userRepository.findById(johnId))
+        when(userRepository.findById(johnId))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByItem_IdAndEndIsBefore(anyLong(), any()))
+        when(bookingRepository.findByItem_IdAndEndIsBefore(anyLong(), any()))
                 .thenReturn(List.of(screwdriverBooking));
-        Mockito
-                .when(commentRepository.save(any()))
+        when(commentRepository.save(any()))
                 .thenReturn(comment);
 
         CommentDto commentDto = itemService.addComment(johnId, screwdriver.getId(), commentCreationDto);
@@ -171,11 +159,9 @@ public class ItemServiceTest {
 
     @Test
     void addCommentShouldThrowNotFoundExceptionWhenUserNotFound() {
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
-        Mockito
-                .when(userRepository.findById(johnId))
+        when(userRepository.findById(johnId))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -187,8 +173,7 @@ public class ItemServiceTest {
 
     @Test
     void addCommentShouldThrowNotFoundExceptionWhenItemNotFound() {
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -200,14 +185,11 @@ public class ItemServiceTest {
 
     @Test
     void addCommentShouldThrowValidationExceptionWhenUserCommentsWithoutPreviousBooking() {
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
-        Mockito
-                .when(userRepository.findById(johnId))
+        when(userRepository.findById(johnId))
                 .thenReturn(Optional.of(john));
-        Mockito
-                .when(bookingRepository.findByItem_IdAndEndIsBefore(anyLong(), any()))
+        when(bookingRepository.findByItem_IdAndEndIsBefore(anyLong(), any()))
                 .thenReturn(new ArrayList<>());
 
         final ValidationException exception = Assertions.assertThrows(
@@ -219,17 +201,14 @@ public class ItemServiceTest {
 
     @Test
     void shouldFindItemByIdAndFindNextAndPrevBookingsWhenRequestingUserIsOwner() {
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
-        Mockito
-                .when(bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(anyLong(), any()))
+        when(bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(anyLong(), any()))
                 .thenReturn(Optional.of(screwdriverLastBooking));
-        Mockito
-                .when(bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(anyLong(), any()))
+        when(bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(anyLong(), any()))
                 .thenReturn(Optional.of(screwdriverNextBooking));
 
-        ItemDto itemDto = itemService.findItemById(jackId, screwdriver.getId());
+        ItemDto itemDto = itemService.findById(jackId, screwdriver.getId());
 
         assertThat(itemDto.getId(), equalTo(screwdriverDto.getId()));
         assertThat(itemDto.getName(), equalTo(screwdriverDto.getName()));
@@ -240,21 +219,20 @@ public class ItemServiceTest {
         assertThat(itemDto.getNextBooking(), equalTo(screwdriverNextBookingDto));
         assertThat(itemDto.getComments(), equalTo(screwdriverDto.getComments()));
 
-        Mockito.verify(itemRepository, Mockito.times(1))
+        verify(itemRepository, times(1))
                 .findById(screwdriver.getId());
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(anyLong(), any());
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findFirstByItem_IdAndStartIsAfterOrderByStartAsc(anyLong(), any());
     }
 
     @Test
     void shouldFindItemByIdWithoutLastAndNextBookingsWhenRequestingUserIsNotOwner() {
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
 
-        ItemDto itemDto = itemService.findItemById(johnId, screwdriver.getId());
+        ItemDto itemDto = itemService.findById(johnId, screwdriver.getId());
 
         assertThat(itemDto.getId(), equalTo(screwdriverDto.getId()));
         assertThat(itemDto.getName(), equalTo(screwdriverDto.getName()));
@@ -265,37 +243,33 @@ public class ItemServiceTest {
         assertThat(itemDto.getNextBooking(), equalTo(null));
         assertThat(itemDto.getComments(), equalTo(screwdriverDto.getComments()));
 
-        Mockito.verify(itemRepository, Mockito.times(1))
+        verify(itemRepository, times(1))
                 .findById(screwdriver.getId());
-        Mockito.verify(bookingRepository, Mockito.times(0))
+        verify(bookingRepository, times(0))
                 .findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(anyLong(), any());
-        Mockito.verify(bookingRepository, Mockito.times(0))
+        verify(bookingRepository, times(0))
                 .findFirstByItem_IdAndStartIsAfterOrderByStartAsc(anyLong(), any());
     }
 
     @Test
     void findItemByIdShouldThrowNotFoundExceptionWhenItemNotFound() {
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
-                () -> itemService.findItemById(johnId, 99L));
+                () -> itemService.findById(johnId, 99L));
 
         Assertions.assertEquals("Item not found", exception.getMessage());
     }
 
     @Test
     void shouldFindItemsByOwnerIdAndFindLastAndNextBookings() {
-        Mockito
-                .when(itemRepository.findByOwnerIdOrderByIdAsc(anyLong()))
+        when(itemRepository.findByOwnerIdOrderByIdAsc(anyLong()))
                 .thenReturn(List.of(screwdriver));
-        Mockito
-                .when(bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(anyLong(), any()))
+        when(bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(anyLong(), any()))
                 .thenReturn(Optional.of(screwdriverLastBooking));
-        Mockito
-                .when(bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(anyLong(), any()))
+        when(bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(anyLong(), any()))
                 .thenReturn(Optional.of(screwdriverNextBooking));
 
         Collection<ItemDto> items = itemService.findItemsByOwnerId(jackId);
@@ -312,11 +286,11 @@ public class ItemServiceTest {
                 hasProperty("comments", equalTo(screwdriverDto.getComments()))
         )));
 
-        Mockito.verify(itemRepository, Mockito.times(1))
+        verify(itemRepository, times(1))
                 .findByOwnerIdOrderByIdAsc(jackId);
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(anyLong(), any());
-        Mockito.verify(bookingRepository, Mockito.times(1))
+        verify(bookingRepository, times(1))
                 .findFirstByItem_IdAndStartIsAfterOrderByStartAsc(anyLong(), any());
     }
 
@@ -324,8 +298,7 @@ public class ItemServiceTest {
     void searchShouldFindItemsByTextInName() {
         Item drill = new Item(
                 2L, jackId, "Дрель", "ударная дрель", 2L, true, new ArrayList<>());
-        Mockito
-                .when(itemRepository.findAll())
+        when(itemRepository.findAll())
                 .thenReturn(List.of(screwdriver, drill));
 
         Collection<ItemDto> items = itemService.search("твертк");
@@ -347,8 +320,7 @@ public class ItemServiceTest {
     void searchShouldFindItemsByTextInDescription() {
         Item drill = new Item(
                 2L, jackId, "Дрель", "ударная дрель", 2L, true, new ArrayList<>());
-        Mockito
-                .when(itemRepository.findAll())
+        when(itemRepository.findAll())
                 .thenReturn(List.of(screwdriver, drill));
 
         Collection<ItemDto> items = itemService.search("nnnnn");
@@ -370,8 +342,7 @@ public class ItemServiceTest {
     void searchShouldBeCaseInsensitive() {
         Item drill = new Item(
                 2L, jackId, "Дрель", "ударная дрель", 2L, true, new ArrayList<>());
-        Mockito
-                .when(itemRepository.findAll())
+        when(itemRepository.findAll())
                 .thenReturn(List.of(screwdriver, drill));
 
         Collection<ItemDto> items = itemService.search("ОтвЕР");
@@ -393,8 +364,7 @@ public class ItemServiceTest {
     void searchShouldReturnOnlyAvailableItems() {
         Item screwdriver2 = new Item(
                 2L, jackId, "отвертка крестовая", "Большая отвертка", 2L, false, new ArrayList<>());
-        Mockito
-                .when(itemRepository.findAll())
+        when(itemRepository.findAll())
                 .thenReturn(List.of(screwdriver, screwdriver2));
 
         Collection<ItemDto> items = itemService.search("отвер");
@@ -442,11 +412,9 @@ public class ItemServiceTest {
                 List.of());
 
 
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
-        Mockito
-                .when(itemRepository.save(any()))
+        when(itemRepository.save(any()))
                 .thenReturn(updatedScrewDriver);
 
         ItemDto updatedItemDto = itemService.patchItem(jackId, 1L, screwdriverPatchDto);
@@ -472,8 +440,7 @@ public class ItemServiceTest {
 
     @Test
     void shouldThrowNotFoundExceptionWhenItemNotFound() {
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -485,8 +452,7 @@ public class ItemServiceTest {
 
     @Test
     void shouldThrowNotFoundExceptionWhenRequesterIsNotTheOwner() {
-        Mockito
-                .when(itemRepository.findById(anyLong()))
+        when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));
 
         final NotFoundException exception = Assertions.assertThrows(
