@@ -44,7 +44,7 @@ class ItemRequestRepositoryIntegrationTest {
 
     @Test
     void findByRequestorIdOrderByCreatedDesc() {
-        List<ItemRequest> actualItemRequests = itemRequestRepository.findByRequestorIdOrderByCreatedDesc(1L);
+        List<ItemRequest> actualItemRequests = itemRequestRepository.findByRequestorIdOrderByCreatedDesc(johnId);
         assertThat(actualItemRequests, hasSize(1));
     }
 
