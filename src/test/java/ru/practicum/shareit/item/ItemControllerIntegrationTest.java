@@ -19,8 +19,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ItemController.class)
@@ -58,7 +57,16 @@ public class ItemControllerIntegrationTest {
     @SneakyThrows
     @Test
     void updateItem() {
+        long sharerUserId = 1L;
+        long itemId = 1L;
+        ItemDto itemToUpdate = new ItemDto(1L, "Дрель", "Ударная дрель", null, true, null, null, null);
 
+        mockMvc.perform(patch("/items/{id}", itemId)
+                        .header("X-Sharer-User-Id", sharerUserId)
+                        .content(objectMapper.writeValueAsString(itemToUpdate)))
+                .andExpect(status().isOk());
+
+        verify(itemService).patchItem(sharerUserId, itemId, itemToUpdate);
     }
 
     @SneakyThrows
