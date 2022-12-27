@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -21,8 +22,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookingController.class)
@@ -97,6 +97,13 @@ public class BookingControllerIntegrationTest {
     @SneakyThrows
     @Test
     void updateStatus() {
-
+        long sharerUserId = 1L;
+        long bookingId = 1L;
+        mockMvc.perform(patch("/bookings/{id}", bookingId)
+                        .header("X-Sharer-User-Id", sharerUserId)
+                        .param("approved", "true"))
+                .andExpect(status().isOk());
+        verify(bookingService).updateStatus(sharerUserId, bookingId, true);
     }
+
 }
