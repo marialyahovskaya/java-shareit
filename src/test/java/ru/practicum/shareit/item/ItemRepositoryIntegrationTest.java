@@ -28,15 +28,17 @@ class ItemRepositoryIntegrationTest {
     private ItemRequestRepository itemRequestRepository;
 
     private Long drillRequestId;
+    private Long johnId;
 
 
     @BeforeEach
     void addItems() {
 
-        User jack = new User(null, "JACK", "jack@email.com");
         User john = new User(null, "JOHN", "john@email.com");
-        userRepository.save(jack);
+        User jack = new User(null, "JACK", "jack@email.com");
         userRepository.save(john);
+        johnId = john.getId();
+        userRepository.save(jack);
 
         ItemRequest drillRequest = new ItemRequest(null, "Дайте дрель", jack, LocalDateTime.now());
         ItemRequest screwdriverRequest = new ItemRequest(null, "Дайте отвертку", john, LocalDateTime.now());
