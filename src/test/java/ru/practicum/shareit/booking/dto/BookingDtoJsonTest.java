@@ -24,7 +24,6 @@ class BookingDtoJsonTest {
 
     @Test
     void testBookingDto() throws Exception {
-
         Long johnId = 1L;
         Long jackId = 2L;
 
@@ -32,7 +31,6 @@ class BookingDtoJsonTest {
 
         Item screwdriver = new Item(
                 1L, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
-
 
         LocalDateTime start = LocalDateTime.now().minusDays(2);
         LocalDateTime end = LocalDateTime.now().minusDays(1);
@@ -53,6 +51,7 @@ class BookingDtoJsonTest {
 
         JsonContent<BookingDto> result = json.write(screwdriverBookingDto);
 
+
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.start").startsWith(startString);
         assertThat(result).extractingJsonPathStringValue("$.end").startsWith(endString);
@@ -68,6 +67,5 @@ class BookingDtoJsonTest {
         assertThat(result).extractingJsonPathStringValue("$.booker.name").isEqualTo("JOHN");
         assertThat(result).extractingJsonPathStringValue("$.booker.email").isEqualTo("john@email.com");
         assertThat(result).extractingJsonPathStringValue("$.status").isEqualTo("APPROVED");
-
     }
 }

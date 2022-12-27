@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
 @DataJpaTest
-class UserRepositoryIT {
+class UserRepositoryIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.PaginationHelper;
 import ru.practicum.shareit.booking.enums.BookingState;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -20,21 +23,34 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
 @DataJpaTest
-class BookingRepositoryIT {
+class BookingRepositoryIntegrationTest {
 
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ItemRepository itemRepository;
     @Autowired
     private BookingRepository bookingRepository;
 
-    private Long jackId = 2L;
-    private Long johnId = 1L;
+    private Long jackId;
+    private Long johnId;
+    private Long itemId;
 
-    private User john = new User(johnId, "JOHN", "john@email.com");
-    private Long itemId = 1L;
+    private User john = new User(null, "JOHN", "john@email.com");
+    private User jack = new User(null, "JACK", "jack@email.com");
+
     @BeforeEach
     void addBookings() {
+        userRepository.save(john);
+        userRepository.save(jack);
+        this.johnId = john.getId();
+        this.jackId = jack.getId();
 
         Item screwdriver = new Item(
-                itemId, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+                null, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+
+        itemRepository.save(screwdriver);
+        this.itemId = screwdriver.getId();
 
         LocalDateTime pastStart = LocalDateTime.now().minusDays(2);
         LocalDateTime pastEnd = LocalDateTime.now().minusDays(1);
@@ -60,21 +76,23 @@ class BookingRepositoryIT {
         bookingRepository.save(futureWaitingScrewdriverBooking);
         bookingRepository.save(futureRejectedScrewdriverBooking);
         bookingRepository.save(futureCanceledScrewdriverBooking);
-
     }
 
     @Test
     void findByBookerOrderByStartDesc() {
-
         Pageable pageable = PaginationHelper.makePageable(0, 100);
+
         List<Booking> actualBookings = bookingRepository.findByBookerOrderByStartDesc(john, pageable);
+
         assertThat(actualBookings, hasSize(6));
     }
 
     @Test
     void findByBookerAndStatusOrderByStartDesc() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
-        List<Booking> actualBookings = bookingRepository.findByBookerAndStatusOrderByStartDesc(john, BookingState.APPROVED, pageable);
+
+        List<Booking> actualBookings = bookingRepository
+                .findByBookerAndStatusOrderByStartDesc(john, BookingState.APPROVED, pageable);
 
         assertThat(actualBookings, hasSize(3));
     }
@@ -82,7 +100,14 @@ class BookingRepositoryIT {
     @Test
     void findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
-        List<Booking> actualBookings = bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(john, LocalDateTime.now(), LocalDateTime.now(), pageable);
+
+        List<Booking> actualBookings = bookingRepository
+                .findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
+                        john,
+                        LocalDateTime.now(),
+                        LocalDateTime.now(),
+                        pageable
+                );
 
         assertThat(actualBookings, hasSize(1));
     }
@@ -90,7 +115,9 @@ class BookingRepositoryIT {
     @Test
     void findByBookerAndEndIsBeforeOrderByStartDesc() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
-        List<Booking> actualBookings = bookingRepository.findByBookerAndEndIsBeforeOrderByStartDesc(john, LocalDateTime.now(), pageable);
+
+        List<Booking> actualBookings = bookingRepository
+                .findByBookerAndEndIsBeforeOrderByStartDesc(john, LocalDateTime.now(), pageable);
 
         assertThat(actualBookings, hasSize(1));
     }
@@ -98,7 +125,9 @@ class BookingRepositoryIT {
     @Test
     void findByBookerAndStartIsAfterOrderByStartDesc() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
-        List<Booking> actualBookings = bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(john, LocalDateTime.now(), pageable);
+
+        List<Booking> actualBookings = bookingRepository
+                .findByBookerAndStartIsAfterOrderByStartDesc(john, LocalDateTime.now(), pageable);
 
         assertThat(actualBookings, hasSize(4));
     }
@@ -106,6 +135,7 @@ class BookingRepositoryIT {
     @Test
     void findByItemOwnerIdOrderByStartDesc() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
+
         List<Booking> actualBookings = bookingRepository.findByItemOwnerIdOrderByStartDesc(jackId, pageable);
 
         assertThat(actualBookings, hasSize(6));
@@ -114,7 +144,9 @@ class BookingRepositoryIT {
     @Test
     void findByItemOwnerIdAndStatusOrderByStartDesc() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
-        List<Booking> actualBookings = bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(jackId, BookingState.REJECTED,  pageable);
+
+        List<Booking> actualBookings = bookingRepository
+                .findByItemOwnerIdAndStatusOrderByStartDesc(jackId, BookingState.REJECTED, pageable);
 
         assertThat(actualBookings, hasSize(1));
     }
@@ -122,7 +154,14 @@ class BookingRepositoryIT {
     @Test
     void findByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
-        List<Booking> actualBookings = bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(jackId, LocalDateTime.now(), LocalDateTime.now(), pageable);
+
+        List<Booking> actualBookings = bookingRepository
+                .findByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
+                        jackId,
+                        LocalDateTime.now(),
+                        LocalDateTime.now(),
+                        pageable
+                );
 
         assertThat(actualBookings, hasSize(1));
     }
@@ -130,7 +169,9 @@ class BookingRepositoryIT {
     @Test
     void findByItemOwnerIdAndEndIsBeforeOrderByStartDesc() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
-        List<Booking> actualBookings = bookingRepository.findByItemOwnerIdAndEndIsBeforeOrderByStartDesc(jackId, LocalDateTime.now(), pageable);
+
+        List<Booking> actualBookings = bookingRepository
+                .findByItemOwnerIdAndEndIsBeforeOrderByStartDesc(jackId, LocalDateTime.now(), pageable);
 
         assertThat(actualBookings, hasSize(1));
     }
@@ -138,23 +179,27 @@ class BookingRepositoryIT {
     @Test
     void findByItemOwnerIdAndStartIsAfterOrderByStartDesc() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
-        List<Booking> actualBookings = bookingRepository.findByItemOwnerIdAndStartIsAfterOrderByStartDesc(jackId, LocalDateTime.now(), pageable);
+
+        List<Booking> actualBookings = bookingRepository
+                .findByItemOwnerIdAndStartIsAfterOrderByStartDesc(jackId, LocalDateTime.now(), pageable);
 
         assertThat(actualBookings, hasSize(4));
     }
 
     @Test
     void findFirstByItem_IdAndEndIsBeforeOrderByEndDesc() {
-        Optional<Booking> actualBooking = bookingRepository.findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(itemId, LocalDateTime.now());
+        Optional<Booking> actualBooking = bookingRepository
+                .findFirstByItem_IdAndEndIsBeforeOrderByEndDesc(itemId, LocalDateTime.now());
 
-        assertThat(actualBooking.isPresent(),equalTo(true));
+        assertThat(actualBooking.isPresent(), equalTo(true));
     }
 
     @Test
     void findFirstByItem_IdAndStartIsAfterOrderByStartAsc() {
-        Optional<Booking> actualBooking = bookingRepository.findFirstByItem_IdAndStartIsAfterOrderByStartAsc(itemId, LocalDateTime.now());
+        Optional<Booking> actualBooking = bookingRepository
+                .findFirstByItem_IdAndStartIsAfterOrderByStartAsc(itemId, LocalDateTime.now());
 
-        assertThat(actualBooking.isPresent(),equalTo(true));
+        assertThat(actualBooking.isPresent(), equalTo(true));
     }
 
     @Test
@@ -162,5 +207,12 @@ class BookingRepositoryIT {
         List<Booking> actualBookings = bookingRepository.findByItem_IdAndEndIsBefore(itemId, LocalDateTime.now());
 
         assertThat(actualBookings, hasSize(1));
+    }
+
+    @AfterEach
+    void deleteAll() {
+        userRepository.deleteAll();
+        itemRepository.deleteAll();
+        bookingRepository.deleteAll();
     }
 }

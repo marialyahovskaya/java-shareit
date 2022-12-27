@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ItemController.class)
-public class ItemControllerIT {
+public class ItemControllerIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -69,7 +69,7 @@ public class ItemControllerIT {
         mockMvc.perform(get("/items/{id}", itemId)
                         .header("X-Sharer-User-Id", sharerUserId))
                 .andExpect(status().isOk());
-        verify(itemService).findById(sharerUserId,itemId);
+        verify(itemService).findById(sharerUserId, itemId);
     }
 
     @SneakyThrows

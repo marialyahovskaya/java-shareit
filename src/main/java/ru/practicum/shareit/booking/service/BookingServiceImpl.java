@@ -54,7 +54,6 @@ public class BookingServiceImpl implements BookingService {
         booking.setItem(item.get());
         booking.setBooker(user.get());
 
-
         return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
@@ -96,18 +95,25 @@ public class BookingServiceImpl implements BookingService {
             case ALL:
                 return BookingMapper.toBookingDto(bookingRepository.findByBookerOrderByStartDesc(user.get(), pageable));
             case CURRENT:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(user.get(),
-                        LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        pageable));
+                return BookingMapper.toBookingDto(bookingRepository
+                        .findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
+                                user.get(),
+                                LocalDateTime.now(),
+                                LocalDateTime.now(),
+                                pageable
+                        ));
             case PAST:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndEndIsBeforeOrderByStartDesc(user.get(), LocalDateTime.now(), pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByBookerAndEndIsBeforeOrderByStartDesc(user.get(), LocalDateTime.now(), pageable));
             case FUTURE:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(user.get(), LocalDateTime.now(), pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(user.get(), LocalDateTime.now(), pageable));
             case WAITING:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.WAITING, pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.WAITING, pageable));
             case REJECTED:
-                return BookingMapper.toBookingDto(bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.REJECTED, pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByBookerAndStatusOrderByStartDesc(user.get(), BookingState.REJECTED, pageable));
         }
         throw new ValidationException("Invalid booking state");
     }
@@ -133,20 +139,27 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageable = PaginationHelper.makePageable(from, size);
         switch (requestedState) {
             case ALL:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdOrderByStartDesc(userId, pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByItemOwnerIdOrderByStartDesc(userId, pageable));
             case CURRENT:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId,
-                        LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId,
+                                LocalDateTime.now(),
+                                LocalDateTime.now(),
+                                pageable
+                        ));
             case PAST:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now(), pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByItemOwnerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now(), pageable));
             case FUTURE:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now(), pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByItemOwnerIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now(), pageable));
             case WAITING:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingState.WAITING, pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingState.WAITING, pageable));
             case REJECTED:
-                return BookingMapper.toBookingDto(bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingState.REJECTED, pageable));
+                return BookingMapper.toBookingDto(
+                        bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingState.REJECTED, pageable));
         }
         throw new ValidationException("Invalid booking state");
 

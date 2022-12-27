@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
 @DataJpaTest
-class ItemRepositoryIT {
+class ItemRepositoryIntegrationTest {
     @Autowired
     private ItemRepository itemRepository;
 
