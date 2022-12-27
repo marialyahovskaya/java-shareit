@@ -49,7 +49,7 @@ public class ItemRequestServiceIntegrationTest {
 
         assertThat(itemRequest.getId(), notNullValue());
         assertThat(itemRequest.getDescription(), equalTo(guitarRequestCreationDto.getDescription()));
-        assertThat(itemRequest.getRequestorId(), equalTo(guitarRequestCreationDto.getRequestorId()));
+        assertThat(itemRequest.getRequestor().getId(), equalTo(guitarRequestCreationDto.getRequestorId()));
         assertThat(itemRequest.getCreated(), notNullValue());
 
     }

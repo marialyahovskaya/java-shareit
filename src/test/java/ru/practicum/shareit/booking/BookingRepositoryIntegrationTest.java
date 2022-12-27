@@ -10,6 +10,8 @@ import ru.practicum.shareit.PaginationHelper;
 import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -39,6 +41,10 @@ class BookingRepositoryIntegrationTest {
     private User john = new User(null, "JOHN", "john@email.com");
     private User jack = new User(null, "JACK", "jack@email.com");
 
+    ItemRequest request = new ItemRequest(null, "Дайте дрель", john, LocalDateTime.now());
+    @Autowired
+    private ItemRequestRepository itemRequestRepository;
+
     @BeforeEach
     void addBookings() {
         userRepository.save(john);
@@ -46,8 +52,10 @@ class BookingRepositoryIntegrationTest {
         this.johnId = john.getId();
         this.jackId = jack.getId();
 
+        itemRequestRepository.save(request);
+
         Item screwdriver = new Item(
-                null, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+                null, jack, "отвертка", "nnnnnnn", request, true, new ArrayList<>());
 
         itemRepository.save(screwdriver);
         this.itemId = screwdriver.getId();

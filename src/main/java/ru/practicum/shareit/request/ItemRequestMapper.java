@@ -2,17 +2,18 @@ package ru.practicum.shareit.request;
 
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class ItemRequestMapper {
 
-    public static ItemRequest toItemRequest(Long userId, ItemRequestDto itemRequestDto) {
+    public static ItemRequest toItemRequest(User requestor, ItemRequestDto itemRequestDto) {
         ItemRequest itemRequest = new ItemRequest();
         itemRequest.setId(itemRequestDto.getId());
         itemRequest.setDescription(itemRequestDto.getDescription());
-        itemRequest.setRequestorId(userId);
+        itemRequest.setRequestor(requestor);
         itemRequest.setCreated(itemRequestDto.getCreated());
         return itemRequest;
     }
@@ -21,7 +22,7 @@ public class ItemRequestMapper {
         return ItemRequestDto.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
-                .requestorId(itemRequest.getRequestorId())
+                .requestorId(itemRequest.getRequestor().getId())
                 .created(itemRequest.getCreated())
                 .items(items)
                 .build();
@@ -31,7 +32,7 @@ public class ItemRequestMapper {
         return ItemRequestDto.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
-                .requestorId(itemRequest.getRequestorId())
+                .requestorId(itemRequest.getRequestor().getId())
                 .created(itemRequest.getCreated())
                 .build();
     }

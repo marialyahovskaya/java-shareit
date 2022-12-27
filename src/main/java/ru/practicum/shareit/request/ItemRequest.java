@@ -2,6 +2,7 @@ package ru.practicum.shareit.request;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -23,8 +24,9 @@ public class ItemRequest {
     @Column(nullable = false)
     private String description;
 
-    @Column(name = "requestor_id", nullable = false)
-    private Long requestorId;
+    @ManyToOne
+    @JoinColumn(name = "requestor_id", nullable = false)
+    private User requestor;
 
     @CreationTimestamp
     private LocalDateTime created;

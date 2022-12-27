@@ -7,10 +7,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,11 +35,18 @@ public class ItemServiceIntegrationTest {
 
         em.persist(jack);
 
+        User john = new User(null, "JOHN", "john@email.com");
+
+        em.persist(john);
+
+        ItemRequest request = new ItemRequest(null, "Дайте дрель", john, LocalDateTime.now());
+
+        em.persist(request);
+
         em.flush();
 
         ItemDto screwdriverDto = new ItemDto(
-                1L, "отвертка", "nnnnnnn", 2L, true, null, null, new ArrayList<>());
-
+                1L, "отвертка", "nnnnnnn", request.getId(), true, null, null, new ArrayList<>());
 
         itemService.addItem(jack.getId(), screwdriverDto);
 
@@ -46,10 +55,10 @@ public class ItemServiceIntegrationTest {
                 .getSingleResult();
 
         assertThat(item.getId(), notNullValue());
-        assertThat(item.getOwnerId(), equalTo(jack.getId()));
+        assertThat(item.getOwner(), equalTo(jack));
         assertThat(item.getName(), equalTo(screwdriverDto.getName()));
         assertThat(item.getDescription(), equalTo(screwdriverDto.getDescription()));
-        assertThat(item.getRequestId(), equalTo(screwdriverDto.getRequestId()));
+        assertThat(item.getRequest(), equalTo(request));
         assertThat(item.getAvailable(), equalTo(screwdriverDto.getAvailable()));
         assertThat(item.getComments(), hasSize(0));
 

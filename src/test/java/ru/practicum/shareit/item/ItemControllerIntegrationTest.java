@@ -32,7 +32,7 @@ public class ItemControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    ItemService itemService;
+    private ItemService itemService;
 
     @SneakyThrows
     @Test

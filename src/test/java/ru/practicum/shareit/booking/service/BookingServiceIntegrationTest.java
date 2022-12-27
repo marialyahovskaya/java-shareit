@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.EntityManager;
@@ -34,15 +35,17 @@ public class BookingServiceIntegrationTest {
     void addBooking() {
 
         User john = new User(null, "JOHN", "john@email.com");
+        em.persist(john);
 
         User jack = new User(null, "JACK", "jack@email.com");
+        em.persist(jack);
+
+        ItemRequest request = new ItemRequest(null, "Дайте дрель", john, LocalDateTime.now());
+        em.persist(request);
 
         Item screwdriver =
-                new Item(null, null, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+                new Item(null, jack, "отвертка", "nnnnnnn", request, true, new ArrayList<>());
 
-        em.persist(john);
-        em.persist(jack);
-        screwdriver.setOwnerId(jack.getId());
         em.persist(screwdriver);
 
         em.flush();

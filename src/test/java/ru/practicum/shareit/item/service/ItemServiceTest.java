@@ -19,6 +19,8 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -45,10 +47,12 @@ public class ItemServiceTest {
     User john = new User(johnId, "JOHN", "john@email.com");
     User jack = new User(jackId, "JACK", "jack@email.com");
 
+    ItemRequest request = new ItemRequest(2L, "Дайте дрель", john, LocalDateTime.now());
+
     Item screwdriver = new Item(
-            1L, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+            1L, jack, "отвертка", "nnnnnnn", request, true, new ArrayList<>());
     Item screwdriverCreationEntity = new Item(
-            null, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+            null, jack, "отвертка", "nnnnnnn", request, true, new ArrayList<>());
 
     ItemDto screwdriverDto = new ItemDto(
             1L, "отвертка", "nnnnnnn", 2L, true, null, null, new ArrayList<>());
@@ -69,6 +73,7 @@ public class ItemServiceTest {
     Booking screwdriverNextBooking = new Booking(1L, nextStart, nextEnd, screwdriver, john, BookingState.APPROVED);
     BookingDto screwdriverNextBookingDto = new BookingDto(1L, nextStart, nextEnd, screwdriver, johnId, john, BookingState.APPROVED);
 
+    ItemRequest screwdriverRequest = new ItemRequest(2L, "Дайте отвертку", john, LocalDateTime.now());
     @Mock
     private ItemRepository itemRepository;
 
@@ -81,11 +86,15 @@ public class ItemServiceTest {
     @Mock
     private CommentRepository commentRepository;
 
+    @Mock
+    private ItemRequestRepository itemRequestRepository;
+
     private ItemService itemService;
+
 
     @BeforeEach
     void setUp() {
-        itemService = new ItemServiceImpl(itemRepository, userRepository, bookingRepository, commentRepository);
+        itemService = new ItemServiceImpl(itemRepository, userRepository, bookingRepository, commentRepository, itemRequestRepository);
     }
 
     @Test
@@ -94,6 +103,8 @@ public class ItemServiceTest {
                 .thenReturn(Optional.of(jack));
         when(itemRepository.save(any()))
                 .thenReturn(screwdriver);
+        when(itemRequestRepository.findById(anyLong()))
+                .thenReturn(Optional.of(request));
 
         ItemDto itemDto = itemService.addItem(jackId, screwdriverCreationDto);
 
@@ -126,6 +137,8 @@ public class ItemServiceTest {
     void addItemShouldThrowNotFoundExceptionWhenItemIsUnavailable() {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(jack));
+        when(itemRequestRepository.findById(anyLong()))
+                .thenReturn(Optional.of(screwdriverRequest));
 
         final ValidationException exception = Assertions.assertThrows(
                 ValidationException.class,
@@ -297,7 +310,7 @@ public class ItemServiceTest {
     @Test
     void searchShouldFindItemsByTextInName() {
         Item drill = new Item(
-                2L, jackId, "Дрель", "ударная дрель", 2L, true, new ArrayList<>());
+                2L, jack, "Дрель", "ударная дрель", request, true, new ArrayList<>());
         when(itemRepository.findAll())
                 .thenReturn(List.of(screwdriver, drill));
 
@@ -319,7 +332,7 @@ public class ItemServiceTest {
     @Test
     void searchShouldFindItemsByTextInDescription() {
         Item drill = new Item(
-                2L, jackId, "Дрель", "ударная дрель", 2L, true, new ArrayList<>());
+                2L, jack, "Дрель", "ударная дрель", request, true, new ArrayList<>());
         when(itemRepository.findAll())
                 .thenReturn(List.of(screwdriver, drill));
 
@@ -341,7 +354,7 @@ public class ItemServiceTest {
     @Test
     void searchShouldBeCaseInsensitive() {
         Item drill = new Item(
-                2L, jackId, "Дрель", "ударная дрель", 2L, true, new ArrayList<>());
+                2L, jack, "Дрель", "ударная дрель", request, true, new ArrayList<>());
         when(itemRepository.findAll())
                 .thenReturn(List.of(screwdriver, drill));
 
@@ -363,9 +376,10 @@ public class ItemServiceTest {
     @Test
     void searchShouldReturnOnlyAvailableItems() {
         Item screwdriver2 = new Item(
-                2L, jackId, "отвертка крестовая", "Большая отвертка", 2L, false, new ArrayList<>());
+                2L, jack, "отвертка крестовая", "Большая отвертка", request, false, new ArrayList<>());
         when(itemRepository.findAll())
                 .thenReturn(List.of(screwdriver, screwdriver2));
+
 
         Collection<ItemDto> items = itemService.search("отвер");
 
@@ -404,10 +418,10 @@ public class ItemServiceTest {
 
         Item updatedScrewDriver = new Item(
                 1L,
-                jackId,
+                jack,
                 "Отвертка upd",
                 "Крестовая",
-                2L,
+                request,
                 false,
                 List.of());
 

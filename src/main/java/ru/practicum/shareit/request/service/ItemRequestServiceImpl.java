@@ -14,11 +14,11 @@ import ru.practicum.shareit.request.ItemRequestMapper;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,14 +32,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto addItemRequest(final Long userId, final ItemRequestDto itemRequestDto) {
-        // ItemValidator.validate(itemRequestDto);
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("User not found");
-        }
+        User requestor = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
         if (itemRequestDto.getDescription() == null) {
             throw new ValidationException("No description");
         }
-        ItemRequest itemRequestToAdd = ItemRequestMapper.toItemRequest(userId, itemRequestDto);
+        ItemRequest itemRequestToAdd = ItemRequestMapper.toItemRequest(requestor, itemRequestDto);
         ItemRequest createdItemRequest = itemRequestRepository.save(itemRequestToAdd);
         return ItemRequestMapper.toItemRequestDto(createdItemRequest, new ArrayList<>());
     }
@@ -82,12 +80,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("User not found");
         }
-        Optional<ItemRequest> itemRequest = itemRequestRepository.findById(id);
-        if (itemRequest.isEmpty()) {
-            throw new NotFoundException("Request not found");
-        }
-        ItemRequestDto dto = ItemRequestMapper.toItemRequestDto(itemRequest.get(),
-                ItemMapper.toItemDto(itemRepository.findByRequestId(itemRequest.get().getId())));
+        ItemRequest itemRequest = itemRequestRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Request not found"));
+
+        ItemRequestDto dto = ItemRequestMapper.toItemRequestDto(itemRequest,
+                ItemMapper.toItemDto(itemRepository.findByRequestId(itemRequest.getId())));
         return dto;
     }
 

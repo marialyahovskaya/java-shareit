@@ -15,12 +15,11 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.enums.BookingState;
-import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -47,13 +46,16 @@ public class BookingServiceTest {
     Long johnId = 1L;
     Long jackId = 2L;
 
+    User john = new User(johnId, "JOHN", "john@email.com");
+    User jack = new User(jackId, "JACK", "jack@email.com");
+
+    ItemRequest request = new ItemRequest(2L, "Дайте дрель", john, LocalDateTime.now());
+
     Item screwdriver =
-            new Item(1L, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+            new Item(1L, jack, "отвертка", "nnnnnnn", request, true, new ArrayList<>());
 
     Item unavailableScrewdriver =
-            new Item(1L, jackId, "отвертка", "nnnnnnn", 2L, false, new ArrayList<>());
-
-    User john = new User(johnId, "JOHN", "john@email.com");
+            new Item(1L, jack, "отвертка", "nnnnnnn", request, false, new ArrayList<>());
 
 
     Booking screwdriverBooking = new Booking(1L, start, end, screwdriver, john, BookingState.WAITING);

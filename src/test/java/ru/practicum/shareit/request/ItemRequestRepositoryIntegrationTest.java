@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.PaginationHelper;
+import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
@@ -16,15 +18,28 @@ import static org.hamcrest.Matchers.hasSize;
 @DataJpaTest
 class ItemRequestRepositoryIntegrationTest {
 
+    private Long johnId;
+
     @Autowired
     private ItemRequestRepository itemRequestRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     @BeforeEach
     void addItemRequests() {
-        itemRequestRepository.save(new ItemRequest(null, "Дайте дрель", 1L, null));
-        itemRequestRepository.save(new ItemRequest(null, "Дайте отвертку", 2L, null));
-        itemRequestRepository.save(new ItemRequest(null, "Дайте гитару", 3L, null));
+
+        User john = new User(null, "JOHN", "john@email.com");
+        User jack = new User(null, "JACK", "jack@email.com");
+        User peter = new User(null, "PETER", "peter@email.com");
+        userRepository.save(john);
+        johnId = john.getId();
+        userRepository.save(jack);
+        userRepository.save(peter);
+        itemRequestRepository.save(new ItemRequest(null, "Дайте дрель", john, null));
+        itemRequestRepository.save(new ItemRequest(null, "Дайте отвертку", jack, null));
+        itemRequestRepository.save(new ItemRequest(null, "Дайте гитару", peter, null));
     }
 
     @Test
@@ -36,12 +51,13 @@ class ItemRequestRepositoryIntegrationTest {
     @Test
     void findByRequestorIdNot() {
         Pageable pageable = PaginationHelper.makePageable(0, 100);
-        List<ItemRequest> actualItemRequests = itemRequestRepository.findByRequestorIdNot(1L, pageable);
+        List<ItemRequest> actualItemRequests = itemRequestRepository.findByRequestorIdNot(johnId, pageable);
         assertThat(actualItemRequests, hasSize(2));
     }
 
     @AfterEach
     void deleteItemRequests() {
         itemRequestRepository.deleteAll();
+        userRepository.deleteAll();
     }
 }

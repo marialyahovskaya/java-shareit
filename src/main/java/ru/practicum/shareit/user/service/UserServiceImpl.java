@@ -5,13 +5,12 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserValidator;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.UserRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,20 +34,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUserById(final Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) {
-            throw new NotFoundException("User not found");
-        }
-        return UserMapper.toUserDto(user.get());
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        return UserMapper.toUserDto(user);
     }
 
     @Override
     public UserDto patchUser(final Long id, final UserDto userDto) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) {
-            throw new NotFoundException("User not found");
-        }
-        User userToUpdate = user.get();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        User userToUpdate = user;
         if (userDto.getName() != null) {
             userToUpdate.setName(userDto.getName());
         }

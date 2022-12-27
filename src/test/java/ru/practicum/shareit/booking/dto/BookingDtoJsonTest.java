@@ -7,6 +7,7 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @JsonTest
-
 class BookingDtoJsonTest {
 
     @Autowired
@@ -28,9 +28,10 @@ class BookingDtoJsonTest {
         Long jackId = 2L;
 
         User john = new User(johnId, "JOHN", "john@email.com");
-
+        User jack = new User(jackId, "JACK", "jack@email.com");
+        ItemRequest request = new ItemRequest(2L, "Дайте дрель", john, LocalDateTime.now());
         Item screwdriver = new Item(
-                1L, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+                1L, jack, "отвертка", "nnnnnnn", request, true, new ArrayList<>());
 
         LocalDateTime start = LocalDateTime.now().minusDays(2);
         LocalDateTime end = LocalDateTime.now().minusDays(1);
@@ -55,10 +56,9 @@ class BookingDtoJsonTest {
         assertThat(result).extractingJsonPathStringValue("$.start").startsWith(startString);
         assertThat(result).extractingJsonPathStringValue("$.end").startsWith(endString);
         assertThat(result).extractingJsonPathNumberValue("$.item.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathNumberValue("$.item.ownerId").isEqualTo(2);
+        assertThat(result).extractingJsonPathNumberValue("$.item.owner.id").isEqualTo(2);
         assertThat(result).extractingJsonPathStringValue("$.item.name").isEqualTo("отвертка");
-        assertThat(result).extractingJsonPathNumberValue("$.item.ownerId").isEqualTo(2);
-        assertThat(result).extractingJsonPathNumberValue("$.item.requestId").isEqualTo(2);
+        assertThat(result).extractingJsonPathNumberValue("$.item.request.id").isEqualTo(2);
         assertThat(result).extractingJsonPathBooleanValue("$.item.available").isEqualTo(true);
         assertThat(result).extractingJsonPathArrayValue("$.item.comments").hasSize(0);
         assertThat(result).extractingJsonPathNumberValue("$.bookerId").isEqualTo(1);

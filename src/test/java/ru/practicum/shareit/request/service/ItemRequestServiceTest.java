@@ -13,8 +13,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.service.ItemRequestService;
-import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -39,9 +37,12 @@ public class ItemRequestServiceTest {
     Long jackId = 2L;
 
     User john = new User(johnId, "JOHN", "john@email.com");
+    User jack = new User(jackId, "JACK", "jack@email.com");
+    ItemRequest screwdriverRequest = new ItemRequest(1L, "Дайте отвертку", john, LocalDateTime.now());
+    ItemRequest guitarRequest = new ItemRequest(1L, "Дайте погонять гитару", john, LocalDateTime.now());
 
     Item screwdriver = new Item(
-            1L, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+            1L, jack, "отвертка", "nnnnnnn", screwdriverRequest, true, new ArrayList<>());
 
     ItemRequestDto guitarRequestCreationDto = new ItemRequestDto(null,
             "Дайте погонять гитару",
@@ -49,7 +50,7 @@ public class ItemRequestServiceTest {
             null,
             null);
 
-    ItemRequest screwdriverRequest = new ItemRequest(1L, "Дайте погонять гитару", johnId, LocalDateTime.now());
+    ItemRequest request = new ItemRequest(1L, "Дайте отвертку", john, LocalDateTime.now());
 
     @Mock
     private ItemRepository itemRepository;
@@ -69,12 +70,12 @@ public class ItemRequestServiceTest {
 
     @Test
     void addItemRequestShouldSaveRequest() {
-        ItemRequest screwdriverCreationRequest = new ItemRequest(null, "Дайте погонять гитару", johnId, null);
+        ItemRequest screwdriverCreationRequest = new ItemRequest(null, "Дайте погонять гитару", john, null);
 
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
         when(itemRequestRepository.save(any()))
-                .thenReturn(screwdriverRequest);
+                .thenReturn(guitarRequest);
 
         ItemRequestDto requestDto = itemRequestService.addItemRequest(johnId, guitarRequestCreationDto);
 
@@ -132,7 +133,7 @@ public class ItemRequestServiceTest {
         assertThat(requests, hasItem(allOf(
                 hasProperty("id", notNullValue()),
                 hasProperty("description", equalTo(screwdriverRequest.getDescription())),
-                hasProperty("requestorId", equalTo(screwdriverRequest.getRequestorId())),
+                hasProperty("requestorId", equalTo(screwdriverRequest.getRequestor().getId())),
                 hasProperty("created", notNullValue())
         )));
     }
@@ -170,7 +171,7 @@ public class ItemRequestServiceTest {
                 hasProperty("id", notNullValue()),
                 hasProperty("name", equalTo(screwdriver.getName())),
                 hasProperty("description", equalTo(screwdriver.getDescription())),
-                hasProperty("requestId", equalTo(screwdriver.getRequestId())),
+                hasProperty("requestId", equalTo(screwdriver.getRequest().getId())),
                 hasProperty("available", equalTo(screwdriver.getAvailable())),
                 hasProperty("comments", allOf(notNullValue(), hasSize(0)))
         )));
@@ -204,7 +205,7 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void shouldFindAlLRequests() {
+    void shouldFindAllRequests() {
         when(itemRequestRepository.findByRequestorIdNot(anyLong(), any()))
                 .thenReturn(List.of(screwdriverRequest));
         when(itemRepository.findByRequestId(anyLong()))
@@ -217,13 +218,13 @@ public class ItemRequestServiceTest {
         assertThat(requests, hasItem(allOf(
                 hasProperty("id", notNullValue()),
                 hasProperty("description", equalTo(screwdriverRequest.getDescription())),
-                hasProperty("requestorId", equalTo(screwdriverRequest.getRequestorId())),
+                hasProperty("requestorId", equalTo(screwdriverRequest.getRequestor().getId())),
                 hasProperty("created", notNullValue()),
                 hasProperty("items", hasItem(allOf(
                         hasProperty("id", notNullValue()),
                         hasProperty("name", equalTo(screwdriver.getName())),
                         hasProperty("description", equalTo(screwdriver.getDescription())),
-                        hasProperty("requestId", equalTo(screwdriver.getRequestId())),
+                        hasProperty("requestId", equalTo(screwdriver.getRequest().getId())),
                         hasProperty("available", equalTo(screwdriver.getAvailable())),
                         hasProperty("comments", allOf(notNullValue(), hasSize(0)))
                 )))

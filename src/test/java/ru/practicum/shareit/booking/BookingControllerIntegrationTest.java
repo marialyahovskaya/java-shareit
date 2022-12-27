@@ -12,6 +12,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
@@ -34,7 +35,7 @@ public class BookingControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    BookingService bookingService;
+    private BookingService bookingService;
 
     @SneakyThrows
     @Test
@@ -42,8 +43,11 @@ public class BookingControllerIntegrationTest {
         Long johnId = 1L;
         Long jackId = 2L;
         User john = new User(johnId, "JOHN", "john@email.com");
+        User jack = new User(jackId, "JACK", "jack@email.com");
+        ItemRequest request = new ItemRequest(null, "Дайте дрель", john, LocalDateTime.now());
+
         Item screwdriver = new Item(
-                1L, jackId, "отвертка", "nnnnnnn", 2L, true, new ArrayList<>());
+                1L, jack, "отвертка", "nnnnnnn", request, true, new ArrayList<>());
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
         BookingCreationDto bookingToCreate = new BookingCreationDto(1L, start, end);
