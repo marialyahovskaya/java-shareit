@@ -36,7 +36,7 @@ class BookingDtoJsonTest {
         LocalDateTime start = LocalDateTime.now().minusDays(2);
         LocalDateTime end = LocalDateTime.now().minusDays(1);
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSSSS");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSSS");
         String startString = start.format(dateTimeFormatter);
         String endString = end.format(dateTimeFormatter);
 
