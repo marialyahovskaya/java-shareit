@@ -63,6 +63,7 @@ public class ItemControllerIntegrationTest {
 
         mockMvc.perform(patch("/items/{id}", itemId)
                         .header("X-Sharer-User-Id", sharerUserId)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemToUpdate)))
                 .andExpect(status().isOk());
 
