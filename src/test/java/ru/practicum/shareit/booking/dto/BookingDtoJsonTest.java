@@ -51,7 +51,6 @@ class BookingDtoJsonTest {
 
         JsonContent<BookingDto> result = json.write(screwdriverBookingDto);
 
-
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.start").startsWith(startString);
         assertThat(result).extractingJsonPathStringValue("$.end").startsWith(endString);
