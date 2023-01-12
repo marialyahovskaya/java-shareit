@@ -11,7 +11,7 @@ public interface UserService {
 
     Collection<UserDto> findAllUsers();
 
-    UserDto findUserById(final Long id);
+    ResponseEntity<Object> findUserById(final Long id);
 
     ResponseEntity<Object> patchUser(final Long id, final UserDto userDto);
 
