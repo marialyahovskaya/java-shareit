@@ -8,6 +8,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
+import ru.practicum.shareit.user.dto.PatchUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 @Service
@@ -25,23 +26,11 @@ public class UserClient extends BaseClient {
         );
     }
 
-
-
-//    public ResponseEntity<Object> getBookings(long userId, BookingState state, Integer from, Integer size) {
-//        Map<String, Object> parameters = Map.of(
-//                "state", state.name(),
-//                "from", from,
-//                "size", size
-//        );
-//        return get("?state={state}&from={from}&size={size}", userId, parameters);
-//    }
-//
-//
     public ResponseEntity<Object> addUser(UserDto userDto) {
         return post("", userDto);
     }
 
-    public ResponseEntity<Object> patchUser(Long id, UserDto userDto) {
+    public ResponseEntity<Object> patchUser(Long id, PatchUserDto userDto) {
         return patch("/" + id, id, userDto);
     }
 
@@ -56,8 +45,4 @@ public class UserClient extends BaseClient {
     public ResponseEntity<Object> getUsers() {
         return get("");
     }
-//
-//    public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
-//        return get("/" + bookingId, userId);
-//    }
 }

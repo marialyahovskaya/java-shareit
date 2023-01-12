@@ -3,9 +3,10 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.dto.PatchUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 @RestController
@@ -13,30 +14,30 @@ import javax.validation.ValidationException;
 @RequestMapping(path = "/users")
 public class UserController {
 
-    private final UserService userService;
+    private final UserClient userClient;
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> findUserById(@PathVariable Long id) {
-        return userService.findUserById(id);
+        return userClient.getUser(id);
     }
 
     @GetMapping
     public ResponseEntity<Object> findAllUsers() {
-        return userService.findAllUsers();
+        return userClient.getUsers();
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) throws ValidationException {
-        return userService.addUser(userDto);
+    public ResponseEntity<Object> createUser(@RequestBody @Valid UserDto userDto) throws ValidationException {
+        return userClient.addUser(userDto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
-        return userService.patchUser(id, userDto);
+    public ResponseEntity<Object> updateUser(@PathVariable Long id, @RequestBody @Valid PatchUserDto userDto) {
+        return userClient.patchUser(id, userDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
-       return userService.deleteUser(id);
+        return userClient.deleteUser(id);
     }
 }

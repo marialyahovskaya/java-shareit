@@ -6,19 +6,17 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class PatchUserDto {
 
     private Long id;
 
-    @NotBlank
     private String name;
 
-    @Email @NotBlank
+    @Email
     private String email;
 
 }
