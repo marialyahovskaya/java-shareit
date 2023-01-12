@@ -15,5 +15,5 @@ public interface UserService {
 
     ResponseEntity<Object> patchUser(final Long id, final UserDto userDto);
 
-    void deleteUser(final Long id);
+    ResponseEntity<Object> deleteUser(final Long id);
 }
