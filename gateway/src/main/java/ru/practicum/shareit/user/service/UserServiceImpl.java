@@ -38,24 +38,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto patchUser(final Long id, final UserDto userDto) {
-//        User user = userRepository.findById(id)
-//                .orElseThrow(() -> new NotFoundException("User not found"));
-//        User userToUpdate = user;
-//        if (userDto.getName() != null) {
-//            userToUpdate.setName(userDto.getName());
-//        }
-//        if (userDto.getEmail() != null) {
-//            if (!userRepository.findByEmailContainingIgnoreCase(userDto.getEmail()).isEmpty()) {
-//                throw new AlreadyExistsException("User with provided email already exists");
-//            }
-//            userToUpdate.setEmail(userDto.getEmail());
-//        }
-//
-//       UserValidator.validate(userToUpdate);
-//        userRepository.save(userToUpdate);
-//        return UserMapper.toUserDto(userToUpdate);
-    return null;
+    public ResponseEntity<Object> patchUser(final Long id, final UserDto userDto) {
+        UserValidator.validatePatch(userDto);
+        return userClient.patchUser(id, userDto);
     }
 
 

@@ -40,6 +40,10 @@ public class UserClient extends BaseClient {
     public ResponseEntity<Object> addUser(UserDto userDto) {
         return post("", userDto);
     }
+
+    public ResponseEntity<Object> patchUser(Long id, UserDto userDto) {
+        return patch("/" + id, id, userDto);
+    }
 //
 //    public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
 //        return get("/" + bookingId, userId);

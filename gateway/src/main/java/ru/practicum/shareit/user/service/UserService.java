@@ -13,7 +13,7 @@ public interface UserService {
 
     UserDto findUserById(final Long id);
 
-    UserDto patchUser(final Long id, final UserDto userDto);
+    ResponseEntity<Object> patchUser(final Long id, final UserDto userDto);
 
     void deleteUser(final Long id);
 }

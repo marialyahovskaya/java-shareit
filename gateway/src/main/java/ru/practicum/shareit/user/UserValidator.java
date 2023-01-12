@@ -17,4 +17,15 @@ public class UserValidator {
             throw new ValidationException("Email must contain symbol \"@\".");
         }
     }
+
+    public static void validatePatch(final UserDto user) throws ValidationException {
+        if (user.getEmail() != null && user.getEmail().equals("")) {
+            log.info("Email is empty");
+            throw new ValidationException("Email is empty.");
+        }
+        if (user.getEmail() != null && !user.getEmail().contains("@")) {
+            log.info("Email must contain symbol \"@\"");
+            throw new ValidationException("Email must contain symbol \"@\".");
+        }
+    }
 }
