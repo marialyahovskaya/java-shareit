@@ -1,14 +1,12 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.ValidationException;
-import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,8 +21,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<UserDto>> findAllUsers() {
-        return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
+    public ResponseEntity<Object> findAllUsers() {
+        return userService.findAllUsers();
     }
 
     @PostMapping
