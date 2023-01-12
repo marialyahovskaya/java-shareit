@@ -6,7 +6,6 @@ import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserValidator;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -23,7 +22,6 @@ public class UserServiceImpl implements UserService {
     public UserDto addUser(final UserDto userDto) {
 
         User user = UserMapper.toUser(userDto);
-        UserValidator.validate(user);
         return UserMapper.toUserDto(userRepository.save(user));
     }
 
@@ -54,7 +52,6 @@ public class UserServiceImpl implements UserService {
             userToUpdate.setEmail(userDto.getEmail());
         }
 
-        UserValidator.validate(userToUpdate);
         userRepository.save(userToUpdate);
         return UserMapper.toUserDto(userToUpdate);
     }

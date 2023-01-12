@@ -28,8 +28,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) throws ValidationException {
-        return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.CREATED);
+    public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) throws ValidationException {
+        return userService.addUser(userDto);
     }
 
     @PatchMapping("/{id}")

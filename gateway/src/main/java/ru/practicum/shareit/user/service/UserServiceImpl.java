@@ -1,12 +1,11 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.AlreadyExistsException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.UserClient;
 import ru.practicum.shareit.user.UserValidator;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,13 +16,11 @@ import java.util.Collection;
 public class UserServiceImpl implements UserService {
 
 
+    private final UserClient userClient;
     @Override
-    public UserDto addUser(final UserDto userDto) {
-//
-//        User user = UserMapper.toUser(userDto);
-//        UserValidator.validate(user);
-//        return UserMapper.toUserDto(userRepository.save(user));
-        return null;
+    public ResponseEntity<Object> addUser(final UserDto userDto) {
+        UserValidator.validate(userDto);
+        return userClient.addUser(userDto);
     }
 
     @Override
