@@ -21,9 +21,4 @@ public @interface StartBeforeEnd {
 
    String end();
 
-//    @Target({ ElementType.TYPE })
-//    @Retention(RetentionPolicy.RUNTIME)
-//    @interface List {
-//        StartBeforeEnd[] value();
-//    }
 }

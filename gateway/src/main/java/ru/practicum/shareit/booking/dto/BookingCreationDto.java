@@ -8,7 +8,6 @@ import ru.practicum.shareit.booking.StartBeforeEnd;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 

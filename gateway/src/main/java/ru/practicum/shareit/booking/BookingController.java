@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.enums.BookingRequestState;
-import ru.practicum.shareit.booking.enums.BookingState;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
@@ -30,7 +29,7 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> findBookingById(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                      @PathVariable Long bookingId) throws ValidationException {
+                                                  @PathVariable Long bookingId) throws ValidationException {
         return bookingClient.findBooking(userId, bookingId);
     }
 
@@ -58,8 +57,8 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> updateStatus(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                   @PathVariable Long bookingId,
-                                                   @RequestParam Boolean approved) {
+                                               @PathVariable Long bookingId,
+                                               @RequestParam Boolean approved) {
         return bookingClient.updateStatus(userId, bookingId, approved);
     }
 

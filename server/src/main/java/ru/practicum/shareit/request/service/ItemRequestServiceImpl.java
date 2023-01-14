@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.PaginationHelper;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.request.ItemRequest;
@@ -74,9 +73,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         ItemRequest itemRequest = itemRequestRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Request not found"));
 
-        ItemRequestDto dto = ItemRequestMapper.toItemRequestDto(itemRequest,
+        return ItemRequestMapper.toItemRequestDto(itemRequest,
                 ItemMapper.toItemDto(itemRepository.findByRequestId(itemRequest.getId())));
-        return dto;
     }
 
 }

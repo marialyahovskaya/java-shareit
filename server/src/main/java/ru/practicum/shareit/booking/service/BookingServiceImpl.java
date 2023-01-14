@@ -58,8 +58,8 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto findBooking(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
-        Boolean userIsBooker = booking.getBooker().getId().equals(userId);
-        Boolean userIsOwner = booking.getItem().getOwner().getId().equals(userId);
+        boolean userIsBooker = booking.getBooker().getId().equals(userId);
+        boolean userIsOwner = booking.getItem().getOwner().getId().equals(userId);
 
         if (!userIsBooker && !userIsOwner) {
             throw new NotFoundException("Booking not found");
@@ -138,15 +138,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto updateStatus(Long userId, Long bookingId, Boolean approved) {
-        Booking booking = bookingRepository.findById(bookingId)
+        Booking bookingToSave = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
-        if (!userId.equals(booking.getItem().getOwner().getId())) {
+        if (!userId.equals(bookingToSave.getItem().getOwner().getId())) {
             throw new NotFoundException("Booking not found");
         }
-        if (approved && booking.getStatus().equals(BookingState.APPROVED)) {
+        if (approved && bookingToSave.getStatus().equals(BookingState.APPROVED)) {
             throw new ValidationException("Already approved");
         }
-        Booking bookingToSave = booking;
         if (approved) {
             bookingToSave.setStatus(BookingState.APPROVED);
         } else {
