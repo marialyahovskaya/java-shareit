@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.PatchItemDto;
 
 import javax.validation.Valid;
 
@@ -21,29 +22,29 @@ public class ItemController {
         return itemClient.addItem(userId, itemDto);
     }
 
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<ItemDto> updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-//                                              @PathVariable Long id,
-//                                              @RequestBody ItemDto itemDto) {
-//        return new ResponseEntity<>(itemService.patchItem(userId, id, itemDto), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<ItemDto> findItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
-//                                                @PathVariable Long id) {
-//        return new ResponseEntity<>(itemService.findById(userId, id), HttpStatus.OK);
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity<Collection<ItemDto>> findItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long userId) {
-//        return new ResponseEntity<>(itemService.findItemsByOwnerId(userId), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/search")
-//    public ResponseEntity<Collection<ItemDto>> search(@RequestParam String text,
-//                                                      @RequestHeader("X-Sharer-User-Id") Long userId) {
-//        return new ResponseEntity<>(itemService.search(text), HttpStatus.OK);
-//    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                              @PathVariable Long id,
+                                              @RequestBody @Valid PatchItemDto itemDto) {
+        return itemClient.patchItem(userId, id, itemDto);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> findItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                @PathVariable Long id) {
+        return itemClient.findById(userId, id);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> findItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemClient.findItemsByOwnerId(userId);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> search(@RequestParam String text,
+                                                      @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemClient.search(userId, text);
+    }
 //
 //    @PostMapping("/{itemId}/comment")
 //    public ResponseEntity<CommentDto> createComment(@RequestHeader("X-Sharer-User-Id") Long userId,

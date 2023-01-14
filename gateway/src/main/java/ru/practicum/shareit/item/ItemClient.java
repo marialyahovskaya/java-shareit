@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.PatchItemDto;
+
+import java.util.Map;
 
 @Service
 public class ItemClient extends BaseClient {
@@ -26,5 +29,24 @@ public class ItemClient extends BaseClient {
 
     public ResponseEntity<Object> addItem(Long userId, ItemDto itemDto) {
         return post("", userId, itemDto);
+    }
+
+    public ResponseEntity<Object> patchItem(Long userId, Long id, PatchItemDto itemDto) {
+        return patch("/" + id, userId, itemDto);
+    }
+
+    public ResponseEntity<Object> findById(Long userId, Long id) {
+        return get("/" + id, userId);
+    }
+
+    public ResponseEntity<Object> findItemsByOwnerId(Long userId) {
+        return get("", userId);
+    }
+
+    public ResponseEntity<Object> search(Long userId, String text) {
+        Map<String, Object> parameters = Map.of(
+                "text", text
+        );
+        return get("/search?text={text}", userId, parameters );
     }
 }

@@ -8,7 +8,6 @@ import ru.practicum.shareit.PaginationHelper;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.BookingValidator;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.enums.BookingRequestState;
@@ -36,7 +35,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto addBooking(Long userId, BookingCreationDto bookingCreationDto) {
-        BookingValidator.validate(bookingCreationDto);
+
         Item item = itemRepository.findById(bookingCreationDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Item not found"));
         User user = userRepository.findById(userId)
