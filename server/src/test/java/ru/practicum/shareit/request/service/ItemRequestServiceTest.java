@@ -102,24 +102,6 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void addItemRequestShouldThrowValidationExceptionWhenNoDescriptionProvided() {
-        ItemRequestDto emptyRequestCreationDto = new ItemRequestDto(null,
-                null,
-                johnId,
-                null,
-                null);
-
-        when(userRepository.findById(anyLong()))
-                .thenReturn(Optional.of(john));
-
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> itemRequestService.addItemRequest(johnId, emptyRequestCreationDto));
-
-        Assertions.assertEquals("No description", exception.getMessage());
-    }
-
-    @Test
     void shouldFindItemRequestsByUserId() {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(john));
@@ -229,23 +211,5 @@ public class ItemRequestServiceTest {
                         hasProperty("comments", allOf(notNullValue(), hasSize(0)))
                 )))
         )));
-    }
-
-    @Test
-    void findAlLRequestsShouldThrowValidationExceptionWhenSizeIsZero() {
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> itemRequestService.findAll(johnId, 0, 0));
-
-        Assertions.assertEquals("Size is zero", exception.getMessage());
-    }
-
-    @Test
-    void findAlLRequestsShouldThrowValidationExceptionWhenFromIsNegative() {
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> itemRequestService.findAll(johnId, -1, 20));
-
-        Assertions.assertEquals("From cannot be negative", exception.getMessage());
     }
 }

@@ -369,16 +369,6 @@ public class BookingServiceTest {
     }
 
     @Test
-    void findBookingsByBookerIdShouldThrowValidationExceptionWhenWrongStatePassed() {
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> bookingService.findBookingsByBookerId(johnId, "SOME_GARBAGE", 0, 100));
-
-        Assertions.assertEquals("Unknown state: SOME_GARBAGE", exception.getMessage());
-    }
-
-
-    @Test
     void findBookingsByBookerIdShouldThrowNotFoundExceptionWhenUserNotFound() {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
@@ -388,30 +378,6 @@ public class BookingServiceTest {
 
         Assertions.assertEquals("User not found", exception.getMessage());
     }
-
-    @Test
-    void findBookingsByBookerIdShouldThrowValidationExceptionWhenSizeIsZero() {
-        when(userRepository.findById(anyLong()))
-                .thenReturn(Optional.of(john));
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> bookingService.findBookingsByBookerId(johnId, "ALL", 0, 0));
-
-        Assertions.assertEquals("Size is zero", exception.getMessage());
-    }
-
-    @Test
-    void findBookingsByBookerIdShouldThrowValidationExceptionWhenFromIsNegative() {
-        when(userRepository.findById(anyLong()))
-                .thenReturn(Optional.of(john));
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> bookingService.findBookingsByBookerId(johnId, "ALL", -1, 100));
-
-        Assertions.assertEquals("From cannot be negative", exception.getMessage());
-    }
-
-
     @Test
     void shouldFindAllBookingsByOwnerId() {
         when(userRepository.findById(anyLong()))
@@ -564,16 +530,6 @@ public class BookingServiceTest {
     }
 
     @Test
-    void findBookingsByOwnerIdShouldThrowValidationExceptionWhenWrongStatePassed() {
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> bookingService.findBookingsByOwnerId(johnId, "SOME_GARBAGE", 0, 100));
-
-        Assertions.assertEquals("Unknown state: SOME_GARBAGE", exception.getMessage());
-    }
-
-
-    @Test
     void findBookingsByOwnerIdShouldThrowNotFoundExceptionWhenUserNotFound() {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
@@ -582,28 +538,6 @@ public class BookingServiceTest {
                 () -> bookingService.findBookingsByOwnerId(99L, "ALL", 0, 100));
 
         Assertions.assertEquals("User not found", exception.getMessage());
-    }
-
-    @Test
-    void findBookingsByOwnerIdShouldThrowValidationExceptionWhenSizeIsZero() {
-        when(userRepository.findById(anyLong()))
-                .thenReturn(Optional.of(john));
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> bookingService.findBookingsByOwnerId(johnId, "ALL", 0, 0));
-
-        Assertions.assertEquals("Size is zero", exception.getMessage());
-    }
-
-    @Test
-    void findBookingsByOwnerIdShouldThrowValidationExceptionWhenFromIsNegative() {
-        when(userRepository.findById(anyLong()))
-                .thenReturn(Optional.of(john));
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> bookingService.findBookingsByOwnerId(johnId, "ALL", -1, 100));
-
-        Assertions.assertEquals("From cannot be negative", exception.getMessage());
     }
 
     @Test

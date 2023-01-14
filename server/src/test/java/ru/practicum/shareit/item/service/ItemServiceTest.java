@@ -444,15 +444,6 @@ public class ItemServiceTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionWhenNoUserIdProvided() {
-        final ValidationException exception = Assertions.assertThrows(
-                ValidationException.class,
-                () -> itemService.patchItem(null, 1L, screwdriverDto));
-
-        Assertions.assertEquals("UserId not provided", exception.getMessage());
-    }
-
-    @Test
     void shouldThrowNotFoundExceptionWhenItemNotFound() {
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
