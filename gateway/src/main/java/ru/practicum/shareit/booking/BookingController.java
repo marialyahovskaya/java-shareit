@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
+import ru.practicum.shareit.booking.enums.BookingRequestState;
+import ru.practicum.shareit.booking.enums.BookingState;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
@@ -38,6 +40,8 @@ public class BookingController {
             @RequestParam(required = false, defaultValue = "ALL") String state,
             @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
             @Positive @RequestParam(required = false, defaultValue = "100") int size) {
+        BookingRequestState requestedState = BookingRequestState.from(state)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + state));
         return bookingClient.findBookingsByBookerId(userId, state, from, size);
     }
 
@@ -47,6 +51,8 @@ public class BookingController {
             @RequestParam(required = false, defaultValue = "ALL") String state,
             @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
             @Positive @RequestParam(required = false, defaultValue = "100") int size) {
+        BookingRequestState requestedState = BookingRequestState.from(state)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + state));
         return bookingClient.findBookingsByOwnerId(userId, state, from, size);
     }
 

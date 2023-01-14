@@ -40,7 +40,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addItem(final Long userId, final ItemDto itemDto) {
-        ItemValidator.validate(itemDto);
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
         ItemRequest request = null;
@@ -58,7 +57,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addComment(final Long userId, final Long itemId, final CommentCreationDto commentCreationDto) {
-        CommentValidator.validate(commentCreationDto);
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
         User user = userRepository.findById(userId)
@@ -117,9 +115,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto patchItem(final Long userId, final Long id, final ItemDto itemDto) {
-        if (userId == null) {
-            throw new ValidationException("UserId not provided");
-        }
         Item itemToUpdate = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
         if (!userId.equals(itemToUpdate.getOwner().getId())) {
@@ -135,7 +130,6 @@ public class ItemServiceImpl implements ItemService {
             itemToUpdate.setAvailable(itemDto.getAvailable());
         }
 
-        ItemValidator.validate(ItemMapper.toItemDto(itemToUpdate));
         Item updatedItem = itemRepository.save(itemToUpdate);
         return ItemMapper.toItemDto(updatedItem);
     }

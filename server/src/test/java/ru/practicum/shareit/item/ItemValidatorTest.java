@@ -3,7 +3,6 @@ package ru.practicum.shareit.item;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.ItemValidator;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.ArrayList;

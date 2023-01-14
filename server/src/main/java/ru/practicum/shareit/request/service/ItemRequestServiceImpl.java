@@ -34,9 +34,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto addItemRequest(final Long userId, final ItemRequestDto itemRequestDto) {
         User requestor = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
-        if (itemRequestDto.getDescription() == null) {
-            throw new ValidationException("No description");
-        }
         ItemRequest itemRequestToAdd = ItemRequestMapper.toItemRequest(requestor, itemRequestDto);
         ItemRequest createdItemRequest = itemRequestRepository.save(itemRequestToAdd);
         return ItemRequestMapper.toItemRequestDto(createdItemRequest, new ArrayList<>());
@@ -59,12 +56,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public Collection<ItemRequestDto> findAll(Long userId, int from, int size) {
-        if (size == 0) {
-            throw new ValidationException("Size is zero");
-        }
-        if (from < 0) {
-            throw new ValidationException("From cannot be negative");
-        }
         Pageable pageable = PaginationHelper.makePageable(from, size);
         List<ItemRequest> itemRequests = itemRequestRepository.findByRequestorIdNot(userId, pageable);
         List<ItemRequestDto> itemRequestDtos = new ArrayList<>();

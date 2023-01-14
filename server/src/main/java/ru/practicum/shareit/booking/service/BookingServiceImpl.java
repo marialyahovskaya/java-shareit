@@ -70,19 +70,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Collection<BookingDto> findBookingsByBookerId(Long userId, String state, int from, int size) {
         BookingRequestState requestedState;
-        try {
-            requestedState = BookingRequestState.valueOf(state);
-        } catch (IllegalArgumentException e) {
-            throw new ValidationException("Unknown state: " + state);
-        }
+        requestedState = BookingRequestState.valueOf(state);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
-        if (size == 0) {
-            throw new ValidationException("Size is zero");
-        }
-        if (from < 0) {
-            throw new ValidationException("From cannot be negative");
-        }
         Pageable pageable = PaginationHelper.makePageable(from, size);
         switch (requestedState) {
             case ALL:
@@ -114,19 +104,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Collection<BookingDto> findBookingsByOwnerId(Long userId, String state, int from, int size) {
         BookingRequestState requestedState;
-        try {
-            requestedState = BookingRequestState.valueOf(state);
-        } catch (IllegalArgumentException e) {
-            throw new ValidationException("Unknown state: " + state);
-        }
+        requestedState = BookingRequestState.valueOf(state);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
-        if (size == 0) {
-            throw new ValidationException("Size is zero");
-        }
-        if (from < 0) {
-            throw new ValidationException("From cannot be negative");
-        }
         Pageable pageable = PaginationHelper.makePageable(from, size);
         switch (requestedState) {
             case ALL:
