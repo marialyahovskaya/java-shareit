@@ -13,11 +13,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 @Transactional
 @SpringBootTest(
-        properties = "db.name=test",
+        properties = {"spring.datasource.url=jdbc:postgresql://localhost:5432/shareit",
+                "spring.datasource.username=postgres",
+                "spring.datasource.password=root"},
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class ItemRequestServiceIntegrationTest {

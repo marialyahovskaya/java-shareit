@@ -378,6 +378,7 @@ public class BookingServiceTest {
 
         Assertions.assertEquals("User not found", exception.getMessage());
     }
+
     @Test
     void shouldFindAllBookingsByOwnerId() {
         when(userRepository.findById(anyLong()))
