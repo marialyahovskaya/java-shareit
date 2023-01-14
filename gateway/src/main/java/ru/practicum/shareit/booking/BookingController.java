@@ -21,31 +21,31 @@ public class BookingController {
             throws ValidationException {
         return bookingClient.addBooking(userId, bookingCreationDto);
     }
-//
-//    @GetMapping("/{bookingId}")
-//    public ResponseEntity<BookingDto> findBookingById(@RequestHeader("X-Sharer-User-Id") Long userId,
-//                                                      @PathVariable Long bookingId) throws ValidationException {
-//        return new ResponseEntity<>(bookingClient.findBooking(userId, bookingId), HttpStatus.OK);
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity<Collection<BookingDto>> findBookingsByBookerId(
-//            @RequestHeader("X-Sharer-User-Id") Long userId,
-//            @RequestParam(required = false, defaultValue = "ALL") String state,
-//            @RequestParam(required = false, defaultValue = "0") int from,
-//            @RequestParam(required = false, defaultValue = "100") int size) {
-//        return new ResponseEntity<>(bookingClient.findBookingsByBookerId(userId, state, from, size), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/owner")
-//    public ResponseEntity<Collection<BookingDto>> findBookingsByOwnerId(
-//            @RequestHeader("X-Sharer-User-Id") Long userId,
-//            @RequestParam(required = false, defaultValue = "ALL") String state,
-//            @RequestParam(required = false, defaultValue = "0") int from,
-//            @RequestParam(required = false, defaultValue = "100") int size) {
-//        return new ResponseEntity<>(bookingClient.findBookingsByOwnerId(userId, state, from, size), HttpStatus.OK);
-//    }
-//
+
+    @GetMapping("/{bookingId}")
+    public ResponseEntity<Object> findBookingById(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                      @PathVariable Long bookingId) throws ValidationException {
+        return bookingClient.findBooking(userId, bookingId);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> findBookingsByBookerId(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(required = false, defaultValue = "ALL") String state,
+            @RequestParam(required = false, defaultValue = "0") int from,
+            @RequestParam(required = false, defaultValue = "100") int size) {
+        return bookingClient.findBookingsByBookerId(userId, state, from, size);
+    }
+
+    @GetMapping("/owner")
+    public ResponseEntity<Object> findBookingsByOwnerId(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(required = false, defaultValue = "ALL") String state,
+            @RequestParam(required = false, defaultValue = "0") int from,
+            @RequestParam(required = false, defaultValue = "100") int size) {
+        return bookingClient.findBookingsByOwnerId(userId, state, from, size);
+    }
+
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> updateStatus(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                    @PathVariable Long bookingId,
