@@ -2,15 +2,19 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
+@Validated
 public class BookingController {
 
     private final BookingClient bookingClient;
@@ -32,8 +36,8 @@ public class BookingController {
     public ResponseEntity<Object> findBookingsByBookerId(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(required = false, defaultValue = "ALL") String state,
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "100") int size) {
+            @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
+            @Positive @RequestParam(required = false, defaultValue = "100") int size) {
         return bookingClient.findBookingsByBookerId(userId, state, from, size);
     }
 
@@ -41,8 +45,8 @@ public class BookingController {
     public ResponseEntity<Object> findBookingsByOwnerId(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(required = false, defaultValue = "ALL") String state,
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "100") int size) {
+            @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
+            @Positive @RequestParam(required = false, defaultValue = "100") int size) {
         return bookingClient.findBookingsByOwnerId(userId, state, from, size);
     }
 

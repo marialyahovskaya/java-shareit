@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentCreationDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.PatchItemDto;
 
@@ -45,11 +46,11 @@ public class ItemController {
                                                       @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemClient.search(userId, text);
     }
-//
-//    @PostMapping("/{itemId}/comment")
-//    public ResponseEntity<CommentDto> createComment(@RequestHeader("X-Sharer-User-Id") Long userId,
-//                                                    @PathVariable Long itemId,
-//                                                    @RequestBody CommentCreationDto commentCreationDto) {
-//        return new ResponseEntity<>(itemService.addComment(userId, itemId, commentCreationDto), HttpStatus.OK);
-//    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<Object> createComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                    @PathVariable Long itemId,
+                                                    @RequestBody @Valid CommentCreationDto commentCreationDto) {
+        return itemClient.addComment(userId, itemId, commentCreationDto);
+    }
 }
