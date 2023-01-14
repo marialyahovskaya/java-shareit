@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-        @StartBeforeEnd(
-                start = "start",
-                end = "end",
-                message = "start should be before end"
-        )
+@StartBeforeEnd(
+        start = "start",
+        end = "end",
+        message = "start should be before end"
+)
 public class BookingCreationDto {
     @NotNull
     private Long itemId;

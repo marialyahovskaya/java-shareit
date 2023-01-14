@@ -21,14 +21,14 @@ public class StartBeforeEndValidator implements ConstraintValidator<StartBeforeE
     public boolean isValid(Object value,
                            ConstraintValidatorContext context) {
 
-       String startValue = new BeanWrapperImpl(value)
+        String startValue = new BeanWrapperImpl(value)
                 .getPropertyValue(start).toString();
-       String endValue = new BeanWrapperImpl(value)
+        String endValue = new BeanWrapperImpl(value)
                 .getPropertyValue(end).toString();
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime s = LocalDateTime.parse(startValue, formatter);
-        LocalDateTime e =LocalDateTime.parse(endValue, formatter);
+        LocalDateTime e = LocalDateTime.parse(endValue, formatter);
 
         if (s != null && e != null) {
             return s.isBefore(e);
