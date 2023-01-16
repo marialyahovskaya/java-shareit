@@ -37,8 +37,8 @@ public class BookingController {
     public ResponseEntity<Object> findBookingsByBookerId(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(required = false, defaultValue = "ALL") String state,
-            @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
-            @Positive @RequestParam(required = false, defaultValue = "100") int size) {
+            @PositiveOrZero @RequestParam(required = false, defaultValue = "0") Integer from,
+            @Positive @RequestParam(required = false, defaultValue = "100") Integer size) {
         BookingRequestState requestedState = BookingRequestState.from(state)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + state));
         return bookingClient.findBookingsByBookerId(userId, state, from, size);
@@ -48,8 +48,8 @@ public class BookingController {
     public ResponseEntity<Object> findBookingsByOwnerId(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(required = false, defaultValue = "ALL") String state,
-            @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
-            @Positive @RequestParam(required = false, defaultValue = "100") int size) {
+            @PositiveOrZero @RequestParam(required = false, defaultValue = "0") Integer from,
+            @Positive @RequestParam(required = false, defaultValue = "100") Integer size) {
         BookingRequestState requestedState = BookingRequestState.from(state)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + state));
         return bookingClient.findBookingsByOwnerId(userId, state, from, size);

@@ -35,8 +35,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Collection<ItemRequestDto>> findAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                              @RequestParam(required = false, defaultValue = "0") int from,
-                                                              @RequestParam(required = false, defaultValue = "100") int size) {
+                                                              @RequestParam(required = false, defaultValue = "0") Integer from,
+                                                              @RequestParam(required = false, defaultValue = "100") Integer size) {
         return new ResponseEntity<Collection<ItemRequestDto>>(itemRequestService.findAll(userId, from, size), HttpStatus.OK);
     }
 }

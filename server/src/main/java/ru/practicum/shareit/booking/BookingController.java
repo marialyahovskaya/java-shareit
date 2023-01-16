@@ -35,8 +35,8 @@ public class BookingController {
     public ResponseEntity<Collection<BookingDto>> findBookingsByBookerId(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(required = false, defaultValue = "ALL") String state,
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "100") int size) {
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "100") Integer size) {
         return new ResponseEntity<>(bookingService.findBookingsByBookerId(userId, state, from, size), HttpStatus.OK);
     }
 
@@ -44,8 +44,8 @@ public class BookingController {
     public ResponseEntity<Collection<BookingDto>> findBookingsByOwnerId(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(required = false, defaultValue = "ALL") String state,
-            @RequestParam(required = false, defaultValue = "0") int from,
-            @RequestParam(required = false, defaultValue = "100") int size) {
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "100") Integer size) {
         return new ResponseEntity<>(bookingService.findBookingsByOwnerId(userId, state, from, size), HttpStatus.OK);
     }
 

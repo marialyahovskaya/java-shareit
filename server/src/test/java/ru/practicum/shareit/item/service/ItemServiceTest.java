@@ -152,7 +152,7 @@ public class ItemServiceTest {
         LocalDateTime start = LocalDateTime.now().minusDays(2);
         LocalDateTime end = LocalDateTime.now().minusDays(1);
         Booking screwdriverBooking = new Booking(1L, start, end, screwdriver, john, BookingState.APPROVED);
-        Comment comment = new Comment(1L, "Замечательная отвёртка", john, LocalDateTime.now(), screwdriver.getId());
+        Comment comment = new Comment(1L, "Замечательная отвёртка", john, LocalDateTime.now(), screwdriver);
 
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(screwdriver));

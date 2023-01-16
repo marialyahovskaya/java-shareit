@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import ru.practicum.shareit.item.dto.CommentCreationDto;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 public class CommentMapper {
@@ -19,7 +20,10 @@ public class CommentMapper {
     public static Comment toComment(Long userId, Long itemId, CommentCreationDto commentCreationDto) {
         Comment comment = new Comment();
         comment.setText(commentCreationDto.getText());
-        comment.setItemId(itemId);
+
+        Item item = new Item();
+        item.setId(itemId);
+        comment.setItem(item);
 
         User user = new User();
         user.setId(userId);
