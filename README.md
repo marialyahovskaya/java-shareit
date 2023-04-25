@@ -1,2 +1,5 @@
-# java-shareit
-Template repository for Shareit project.
+# Shareit
+
+Сервис для шеринга вещей - размещение заявок и предложений.
+
+REST-сервисы с использованием Java 8, Spring Boot, Lombok, взаимодействие с БД (PostgreSQL) с помощью JPA-репозиториев, Docker. Модульные и интеграционные автотесты.
